@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mosaic Loop — Dark Gen-Z</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Plus Jakarta Sans',system-ui;background:#08120E;color:#EAF5EE}
+h1,h2{font-family:'Space Grotesk',sans-serif}
+.card{background:#0F1F18;border:1px solid #1E3329;border-radius:26px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.chip{border:1.5px solid #244034;border-radius:20px;padding:12px;background:#0F1F18;cursor:pointer;transition:.2s}
+.chip:hover{transform:translateY(-3px);border-color:#5CFFB1}
+.chip.sel{border-color:#5CFFB1;background:#12352A;box-shadow:0 0 0 1px #5CFFB1,0 0 24px rgba(92,255,177,.25)}
+.navbtn{padding:10px 18px;border-radius:99px;font-size:13px;font-weight:800;background:#0F1F18;border:1px solid #244034;color:#EAF5EE}
+.navbtn.on{background:#5CFFB1;color:#08120E;border-color:#5CFFB1}
+.view{display:none}.view.on{display:block;animation:fade .3s}@keyframes fade{from{opacity:0;transform:translateY(8px)}}
+#buddy{position:fixed;left:16px;bottom:16px;z-index:60;cursor:pointer;animation:roam 13s ease-in-out infinite}
+@keyframes roam{0%,100%{transform:translate(0,0)}30%{transform:translate(16px,-12px)}60%{transform:translate(-6px,-20px)}}
+.bub{background:#5CFFB1;color:#08120E;border-radius:18px 18px 18px 6px;padding:10px 12px;font-size:12px;font-weight:800;max-width:220px;box-shadow:0 0 30px rgba(92,255,177,.4)}
+.fig{font-size:52px;animation:wv 2.2s ease-in-out infinite}@keyframes wv{50%{transform:rotate(10deg) translateY(-6px)}}
+.cal-day{min-height:84px;border-radius:18px;background:#0F1F18;border:1px solid #244034;padding:8px;font-size:11px;cursor:pointer}
+.cal-day.has{background:#12352A;border-color:#5CFFB1}.cal-day.today{outline:2px solid #5CFFB1}
+.bar{height:8px;background:#1E3329;border-radius:99px;overflow:hidden}.fill{height:100%;border-radius:99px}
+.pill{font-size:10px;font-weight:800;background:#5CFFB1;color:#08120E;border-radius:99px;padding:2px 8px}
+#buddy.small .bub{display:none}
+#buddy.small .fig{font-size:30px;opacity:.9}
+#buddy:not(.small) .fig{font-size:52px}
+input,select{background:#0F1F18!important;color:#EAF5EE!important;border-color:#244034!important}
+#brandGate:empty{display:none}
+</style></head>
+<body>
+<div class="max-w-5xl mx-auto p-4 pb-32">
+<header class="flex justify-between items-center py-4 flex-wrap gap-2">
+<div class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl flex items-center justify-center font-extrabold text-xl" style="background:#5CFFB1;color:#08120E">M</div>
+<div><h1 class="text-2xl">MOSAIC LOOP ⚡</h1><p class="text-xs opacity-60">Bodywise • Man Matters • Little Joys • Root Labs</p></div></div>
+<div class="ml-auto flex gap-2 items-center text-xs font-bold"><span id="brandPill" class="border rounded-full px-3 py-1.5" style="border-color:#244034">Brand: —</span><button onclick="changeBrand()" class="border rounded-full px-3 py-1.5" style="border-color:#244034">Switch</button><a href="#buddy" onclick="go('home')" class="border rounded-full px-3 py-1.5" style="border-color:#244034">connected ✓</a></div>
+</header>
+<nav class="flex gap-2 flex-wrap my-2">
+<button class="navbtn on" data-v="home" onclick="go('home')">Home</button>
+<button class="navbtn" data-v="cal" onclick="go('cal')">Calendar</button>
+<button class="navbtn" data-v="shelf" onclick="go('shelf')">Shelf</button>
+<button class="navbtn" data-v="rewards" onclick="go('rewards')">Rewards 🎁</button>
+<button class="navbtn" data-v="trust" onclick="go('trust')">Trust</button>
+</nav>
+<div class="card px-4 py-3 flex flex-wrap gap-2 items-center text-xs"><span class="font-extrabold" style="color:#5CFFB1">HOUSEHOLD:</span><span id="famPills" class="flex gap-2 flex-wrap"></span><button onclick="addMember()" class="border rounded-full px-3 py-1 font-bold" style="border-color:#244034">+ Add</button><button onclick="toggleHouse()" id="houseBtn" class="border rounded-full px-3 py-1 font-bold" style="border-color:#244034"></button></div>
+
+<div id="v-home" class="view on">
+<div class="card p-6 md:p-8 mt-3" style="background:linear-gradient(135deg,#0B2E22,#134E38);border-color:#5CFFB1">
+<p class="text-sm opacity-70" id="helloDate"></p>
+<h2 class="text-4xl md:text-5xl font-bold">Hey, how are you today?</h2>
+<p class="text-sm opacity-70 mt-1">6 taps. No numbers. Pure vibe.</p>
+<div id="dnaHero" class="mt-3 rounded-2xl p-4 text-sm" style="background:rgba(92,255,177,.12);border:1px solid #5CFFB1"></div>
+</div>
+<div id="game" class="grid md:grid-cols-3 gap-3 mt-3"></div>
+<div class="card p-5 mt-3"><h3 class="font-extrabold">Your strip ⚡</h3><div id="strip" class="mt-2"></div><div id="titleLine" class="mt-2 font-bold" style="color:#5CFFB1"></div><div id="whyLine" class="text-sm opacity-70"></div><div id="docInline"></div></div>
+</div>
+
+<div id="v-cal" class="view"><div class="card p-5 mt-3"><div class="flex justify-between items-center"><h3 class="text-xl font-bold">Memory 📅</h3><div class="flex gap-2 items-center"><button onclick="calShift(-1)" class="navbtn">‹</button><b id="calLabel" class="text-sm"></b><button onclick="calShift(1)" class="navbtn">›</button></div></div>
+<p class="text-xs opacity-60">Buys auto-land as “delivered today”. Tap any day.</p><div id="calGrid" class="grid grid-cols-7 gap-2 mt-3"></div><div id="dayDetail" class="mt-3 text-sm rounded-2xl p-3" style="background:#0B1F17"></div></div></div>
+
+<div id="v-shelf" class="view"><div class="card p-5 mt-3"><h3 class="text-xl font-bold">Shelf 🧴</h3><p class="text-xs opacity-60">Prefilled: 2 roll-ons + bodywash + foot. New buy → jumps to calendar.</p><div id="shelfList" class="mt-3 space-y-2 text-sm"></div>
+<div class="flex gap-2 mt-3"><input id="p_name" placeholder="+ Sunscreen" class="border rounded-full px-4 py-2 text-sm flex-1"><button onclick="addPurchase()" class="font-bold text-sm px-5 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">Log → calendar</button></div></div></div>
+
+<div id="v-rewards" class="view"><div class="card p-5 mt-3" style="border-color:#5CFFB1"><h3 class="text-xl font-bold">Rewards 🎁 — other brands free</h3><p class="text-xs opacity-60">Log family → unlock Man Matters / Little Joys trials free next order.</p><div id="rewardRule" class="text-xs mt-2 rounded-2xl p-3" style="background:#12352A"></div><div id="rewardList" class="mt-3 space-y-2"></div></div></div>
+
+<div id="v-trust" class="view"><div class="card p-5 mt-3"><h3 class="text-xl font-bold">Trust ✓</h3><p class="text-xs opacity-60">Foot 1,700/214,000 (0.79%) • Underarm 1,400/575,000 (0.24%) • verified only</p><div id="trustList" class="mt-3 space-y-2 text-sm"></div>
+<div class="mt-3 text-sm"><b>Honest Reports — all SKUs</b><div class="flex gap-2 mt-2"><input id="hrB" placeholder="SL2411" class="border rounded-full px-4 py-2 text-sm"><button onclick="verifyBatch()" class="font-bold text-xs px-5 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">Verify</button></div><div id="hrOut" class="text-xs mt-2 opacity-70"></div></div></div></div>
+</div>
+
+<div id="buddy" class="small" onclick="buddyClick()"><div class="bub">Hey, I'm your AI friend ⚡<br>Wanna talk? Ask me anything</div><div class="fig">🧚</div></div>
+<div id="brandGate"></div>
+<div id="modal"></div><div id="toasts" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+<script>
+let cur=new Date();cur.setDate(1);
+const Q=[{key:'sleep',t:'Sleep?',opts:[['😴','Deep'],['🙂','Okay'],['🌙','Late'],['🥱','Rough']],vals:[90,70,45,20]},
+{key:'stress',t:'Mind?',opts:[['🍃','Calm'],['🙂','Fine'],['😮‍💨','Loaded'],['🤯','Fried']],vals:[90,70,40,15]},
+{key:'energy',t:'Battery?',opts:[['⚡','Full'],['🔋','Half'],['🪫','Low'],['🛋️','Empty']],vals:[90,65,35,15]},
+{key:'food',t:'Food?',opts:[['🥗','Clean'],['🍲','Home'],['🍕','Junk'],['⏭️','Skip']],vals:[90,70,40,25]},
+{key:'move',t:'Move?',opts:[['🏃','Hard'],['🚶','Walk'],['🧍','Meh'],['💻','Desk']],vals:[90,65,35,15]},
+{key:'skin',t:'Skin/hair?',opts:[['✨','Glow'],['🙂','Ok'],['😟','Meh'],['😣','Bad']],vals:[90,70,45,20]}];
+let picks=JSON.parse(localStorage.getItem('dk_picks')||'{}');
+function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));document.getElementById('v-'+v).classList.add('on');document.querySelectorAll('.navbtn[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(v==='cal')renderCal();if(v==='rewards')renderRewards();if(v==='shelf')renderShelf();}
+function openM(h){document.getElementById('modal').innerHTML=`<div class="fixed inset-0 flex items-center justify-center p-4 z-50" style="background:rgba(0,0,0,.7)"><div class="rounded-[26px] p-6 max-w-md w-full" style="background:#0F1F18;border:1px solid #5CFFB1">${h}</div></div>`;}
+function closeM(){document.getElementById('modal').innerHTML='';}
+function toast(m,fn){const d=document.createElement('div');d.className='text-xs px-4 py-3 rounded-2xl max-w-xs';d.style.background='#5CFFB1';d.style.color='#08120E';d.style.fontWeight='800';d.innerHTML=m;if(fn)d.onclick=fn;document.getElementById('toasts').appendChild(d);setTimeout(()=>d.remove(),6000);}
+function fam(){return JSON.parse(localStorage.getItem('dk_fam')||'["Me","Mom","Husband","Kid"]');}
+function curMem(){return localStorage.getItem('dk_cur')||'Me';}
+function houseMode(){return localStorage.getItem('dk_house')==='1';}
+function renderFam(){const F=fam(),c=curMem();famPills.innerHTML=F.map(m=>`<button onclick="setMem('${m}')" class="border rounded-full px-3 py-1 font-bold" style="border-color:#244034;${m===c?'background:#5CFFB1;color:#08120E':''}">${m}</button>`).join('');houseBtn.innerText=houseMode()?'Household':'Only '+c;}
+function setMem(m){localStorage.setItem('dk_cur',m);localStorage.setItem('dk_house','0');renderFam();renderCal();renderShelf();renderRewards();}
+function toggleHouse(){localStorage.setItem('dk_house',houseMode()?'0':'1');renderFam();renderCal();renderShelf();renderRewards();}
+function addMember(){openM(`<h3 class="font-bold text-lg">Add member</h3><input id="nm" class="border rounded-full px-4 py-2 text-sm w-full mt-2" placeholder="Dad, Sister"><div class="flex gap-2 mt-3"><button onclick="saveMember()" class="text-xs font-bold px-4 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">Add</button><button onclick="closeM()" class="text-xs underline">Close</button></div>`);}
+function saveMember(){const v=document.getElementById('nm').value.trim();if(!v)return closeM();let F=fam();F.push(v);localStorage.setItem('dk_fam',JSON.stringify(F));closeM();renderFam();}
+function dna(){if(Object.keys(picks).length<6)return null;const o={};Q.forEach(q=>o[q.key]=q.vals[picks[q.key]]);return{Sleep:o.sleep,Stress:o.stress,Energy:o.energy,Nutrition:o.food,Activity:o.move,Skin:o.skin};}
+function titleOf(d){if(d.Stress<40&&d.Sleep<55)return{t:'OVERTHINKER',w:'busy mind, light sleep'};if(d.Sleep<50&&d.Energy<45)return{t:'NIGHT OWL',w:'late nights, slow mornings'};if(d.Skin<45)return{t:'GLOW CHASER',w:'skin wants care'};if(d.Energy>70&&d.Sleep>65)return{t:'BALANCED',w:'steady'};return{t:'BUILDER',w:'quietly building'};}
+function renderGame(){helloDate.innerText=new Date().toDateString()+' • '+curMem();
+game.innerHTML=Q.map(q=>`<div class="card p-4"><p class="font-bold text-sm">${q.t}</p><div class="grid grid-cols-4 gap-2 mt-2">${q.opts.map((o,i)=>`<div class="chip text-center ${picks[q.key]===i?'sel':''}" onclick="pick('${q.key}',${i})"><div class="text-2xl">${o[0]}</div><div class="text-[11px] font-bold">${o[1]}</div></div>`).join('')}</div></div>`).join('');
+const d=dna();if(!d){dnaHero.innerHTML='Pick all 6 ⚡';return;}
+const t=titleOf(d);dnaHero.innerHTML=`Today: <b>${t.t}</b> — ${t.w}`;
+const h=JSON.parse(localStorage.getItem('dk_hist')||'[]');
+titleLine.innerText=t.t+' — '+t.w;strip.innerHTML=h.slice(-14).map(x=>`<span title="${x.date}" style="width:26px;height:26px;border-radius:9px;display:inline-block;margin:2px;background:${x.Sleep<50?'#7FB4FF':x.Stress<45?'#F472B6':'#5CFFB1'}"></span>`).join('');
+whyLine.innerText='Shift vs baseline tracked. Severe → doctor ₹299 fixed pops here.';
+docInline.innerHTML=(d.Sleep<30||d.Stress<25)?`<div class="mt-3 p-4 rounded-2xl text-sm" style="background:#3A1F1F;border:1px solid #FF8A8A"><b>🩺 Heavy — see doctor ₹299 fixed.</b> I won't guess.<br><button onclick="toast('Booked ₹299')" class="mt-2 font-bold text-xs px-4 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">Book ₹299</button></div>`:'';}
+function pick(k,i){picks[k]=i;localStorage.setItem('dk_picks',JSON.stringify(picks));renderGame();
+if(Object.keys(picks).length===6){const d=dna();let h=JSON.parse(localStorage.getItem('dk_hist')||'[]');const t=new Date().toISOString().slice(0,10);if(!h.find(x=>x.date===t))h.push({...d,date:t});localStorage.setItem('dk_hist',JSON.stringify(h));logDay(new Date(),'feeling: '+titleOf(d).t);renderGame();renderCal();toast('Saved + calendar ⚡',()=>go('cal'));}}
+function logs(){return JSON.parse(localStorage.getItem('dk_logs')||'{}');}
+function logDay(dt,ev){const k=dt.toISOString().slice(0,10);let L=logs();L[k]=L[k]||[];const tag=`${curMem()}: ${ev}`;if(!L[k].includes(tag))L[k].push(tag);localStorage.setItem('dk_logs',JSON.stringify(L));}
+function calShift(n){cur.setMonth(cur.getMonth()+n);renderCal();}
+function renderCal(){const y=cur.getFullYear(),m=cur.getMonth();calLabel.innerText=cur.toLocaleString('default',{month:'long',year:'numeric'});
+const f=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();let html='';['S','M','T','W','T','F','S'].forEach(d=>html+=`<div class="text-center text-[11px] opacity-40 font-bold">${d}</div>`);
+for(let i=0;i<f;i++)html+='<div></div>';let L=logs();const tk=new Date().toISOString().slice(0,10);
+for(let d=1;d<=days;d++){const k=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;let ev=L[k]||[];if(!houseMode())ev=ev.filter(e=>e.startsWith(curMem()+':'));
+html+=`<div class="cal-day ${ev.length?'has':''} ${k===tk?'today':''}" onclick="dayPop('${k}')"><b>${d}</b> ${k===tk?'<span class="pill">today</span>':''}<br>${ev.slice(0,3).map(e=>e.includes('bought')?'🛍️ '+e.split(': ')[1].slice(0,12):'💭 '+e.split(': ')[1].slice(0,12)).join('<br>')}</div>`;}
+calGrid.innerHTML=html;const ks=Object.keys(L).sort();let all=[];ks.forEach(k=>(L[k]||[]).forEach(e=>{if(houseMode()||e.startsWith(curMem()+':'))all.push(`${k} ${e}`);}));
+dayDetail.innerHTML=all.length?all.slice(-4).join('<br>'):'Empty.';}
+function dayPop(k){const ev=(logs()[k]||[]).filter(e=>houseMode()||e.startsWith(curMem()+':'));
+openM(`<h3 class="font-bold">${k}</h3><p class="text-sm mt-1">${ev.join('<br>')||'Empty.'}</p><div class="flex gap-2 mt-3"><button onclick="logDay(new Date('${k}T12:00:00'),'feeling logged');closeM();renderCal()" class="text-xs font-bold px-4 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">+ Feeling</button><button onclick="closeM()" class="text-xs underline">Close</button></div>`);}
+function seed(){let s=JSON.parse(localStorage.getItem('dk_shelf')||'null');if(s)return s;
+const off=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.toISOString().slice(0,10);};
+s=[{name:'Underarm Roll-On',qty:1,dose:.05,used:.3,start:off(2),icon:'💧',owner:'Me'},{name:'Underarm Roll-On (spare)',qty:1,dose:.05,used:0,start:off(0),icon:'💧',owner:'Me'},{name:'Bodywash',qty:1,dose:.04,used:.4,start:off(9),icon:'🧴',owner:'Mom'},{name:'Foot Roll-On',qty:1,dose:.05,used:.5,start:off(12),icon:'🦶',owner:'Kid'}];
+localStorage.setItem('dk_shelf',JSON.stringify(s));return s;}
+function renderShelf(){let s=JSON.parse(localStorage.getItem('dk_shelf')||'[]');if(!s.length)s=seed();
+let v=s.map((p,i)=>({p,i})).filter(({p})=>houseMode()||(p.owner||'Me')===curMem());
+shelfList.innerHTML=v.map(({p,i})=>{const left=Math.max(0,p.qty-p.used);const pct=left/p.qty*100;
+return`<div class="border rounded-2xl p-3 flex justify-between items-center" style="border-color:#244034"><div class="flex gap-3 items-center"><div class="text-3xl">${p.icon}</div><div><b>${p.name}</b> <span class="text-xs opacity-60">• ${p.owner}</span><br><div class="bar w-40 mt-1"><div class="fill" style="width:${pct}%;background:#5CFFB1"></div></div></div></div><button onclick="useDay(${i})" class="text-xs font-bold border px-3 py-2 rounded-full" style="border-color:#244034">+1</button></div>`;}).join('');}
+function addPurchase(){const n=p_name.value||'Sunscreen';let s=JSON.parse(localStorage.getItem('dk_shelf')||'[]');s.push({name:n,qty:30,dose:1,used:0,start:new Date().toISOString().slice(0,10),icon:'✨',owner:curMem()});localStorage.setItem('dk_shelf',JSON.stringify(s));p_name.value='';renderShelf();logDay(new Date(),`bought ${n}`);renderCal();go('cal');toast(`📅 ${n} delivered today`);}
+function useDay(i){let s=JSON.parse(localStorage.getItem('dk_shelf')||'[]');s[i].used+=s[i].dose;localStorage.setItem('dk_shelf',JSON.stringify(s));renderShelf();}
+const TP=[{n:'Foot Roll-On',u:214000,r:1700},{n:'Underarm Roll-On',u:575000,r:1400}];
+function renderTrust(){trustList.innerHTML=TP.map(p=>{const pct=(p.r/p.u*100).toFixed(2);return`<div class="border rounded-2xl p-3" style="border-color:#244034"><b class="text-sm">${p.n}</b><span class="text-xs opacity-60"> ${p.u.toLocaleString('en-IN')} • ${p.r} (${pct}%)</span><div class="bar mt-1"><div class="fill" style="width:${pct*15}%;background:#5CFFB1"></div></div></div>`;}).join('');}
+function verifyBatch(){hrOut.innerHTML=`Batch ${hrB.value||'SL2411'} ✓ every SKU now.`;}
+const SM=[{id:'mm',b:'Man Matters',n:'Hair Trial 7N',c:'MM-FREE7'},{id:'lj',b:'Little Joys',n:'Kids DHA',c:'LJ-KIDS7'}];
+function claimed(){return JSON.parse(localStorage.getItem('dk_claim')||'[]');}
+function renderRewards(){const F=fam();const mine=myStoredBrand()||'Be Bodywise';
+let ids=mine.includes('Bodywise')?['mm','lj']:mine.includes('Man Matters')?['bw','lj']:mine.includes('Little Joys')?['bw','mm']:['bw','mm'];
+rewardRule.innerHTML=`You use <b>${mine}</b> + household [${F.join(', ')}] → other-brand trials free next order. Coupon auto-applies.`;
+const C=claimed();const map={mm:SM[0],bw:{id:'bw',b:'Be Bodywise',n:'Sleep Trial 7N',c:'BW-FREE7'},lj:SM[1],rl:{id:'rl',b:'Root Labs',n:'Magnesium Trial',c:'RL-FREE7'}};
+rewardList.innerHTML=ids.map(id=>{const s=map[id];return`<div class="border rounded-2xl p-3 flex justify-between items-center" style="border-color:#244034"><div><b>${s.b}</b> — ${s.n}<br><span class="text-xs opacity-60">${s.c} free next order</span></div>${C.includes(s.id)?'✓':`<button onclick="claim('${s.id}')" class="text-xs font-bold px-4 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">Claim</button>`}</div>`;}).join('');}
+function claim(id){let C=claimed();C.push(id);localStorage.setItem('dk_claim',JSON.stringify(C));renderRewards();toast('Claimed 🎁');}
+function openBuddy(){document.getElementById('buddy').classList.remove('small');openM(`<h3 class="font-bold">🧚 Hey, I'm your AI friend!</h3><p class="text-xs opacity-60">Wanna talk? Wellness only.</p><div id="rc" class="rounded-2xl p-3 text-sm mt-2" style="background:#0B1F17;max-height:200px;overflow:auto"></div><div class="flex gap-2 mt-2"><input id="ri" placeholder="sleep, stress…" class="flex-1 border rounded-full px-4 py-2 text-sm"><button onclick="rSend()" class="text-xs font-bold px-4 py-2 rounded-full" style="background:#5CFFB1;color:#08120E">Ask</button></div><button onclick="closeM();shrinkBuddy()" class="text-xs underline mt-2">Close</button>`);}
+function buddyClick(){const b=document.getElementById('buddy');if(b.classList.contains('small')){b.classList.remove('small');openBuddy();}else openBuddy();}
+function shrinkBuddy(){document.getElementById('buddy').classList.add('small');}
+// brand gate: which brand do you use?
+function myStoredBrand(){return localStorage.getItem('dk_brand')||'';}
+function askBrand(){const B=['Be Bodywise','Man Matters','Little Joys','Root Labs'];
+document.getElementById('brandGate').innerHTML=`<div class="fixed inset-0 flex items-center justify-center p-4 z-50" style="background:rgba(0,0,0,.8)"><div class="rounded-[26px] p-6 max-w-lg w-full" style="background:#0F1F18;border:1px solid #5CFFB1"><h2 class="text-2xl font-bold">Which Mosaic brand do you use? 🌿</h2><p class="text-xs opacity-60 mt-1">Your app reshapes around it — shelf, samples, doctor paths.</p><div class="grid grid-cols-2 gap-2 mt-4">${B.map(b=>`<button onclick="chooseBrand('${b}')" class="chip text-left"><b>${b}</b><br><span class="text-xs opacity-60">${b==='Be Bodywise'?'women: hair, skin, sleep':b==='Man Matters'?'men: hair, beard, performance':b==='Little Joys'?'kids + moms nutrition':'unisex Ayurveda'}</span></button>`).join('')}</div></div></div>`;}
+function chooseBrand(b){localStorage.setItem('dk_brand',b);document.getElementById('brandGate').innerHTML='';applyBrand();}
+function changeBrand(){askBrand();}
+function applyBrand(){const b=myStoredBrand()||'Be Bodywise';brandPill.innerText='Brand: '+b;
+helloDate.innerText=new Date().toDateString()+' • '+curMem()+' • '+b;renderRewards();}
+function rSend(){const q=ri.value;ri.value='';rc.innerHTML+=`<div><b>You:</b> ${q}</div>`;const l=q.toLowerCase();
+if(['marry','marriage','politics','stock'].some(k=>l.includes(k))){rc.innerHTML+=`<div><b>🧚:</b> Wellness only.</div>`;return;}
+if(l.includes('severe')){rc.innerHTML+=`<div><b>🧚:</b> Severe → doctor ₹299 fixed. I won't guess.</div>`;return;}
+rc.innerHTML+=`<div><b>🧚:</b> Tell me sleep/stress/energy/hair?</div>`;}
+renderGame();renderCal();renderShelf();renderTrust();renderFam();renderRewards();applyBrand();if(!myStoredBrand())askBrand();
+</script></body></html>

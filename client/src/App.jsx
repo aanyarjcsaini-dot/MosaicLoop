@@ -1,0 +1,1 @@
+export default function App(){return <div style={{background:'#08120E',color:'#EAF5EE',minHeight:'100vh',padding:24,fontFamily:'Plus Jakarta Sans'}}><h1>Mosaic Loop — MERN scaffold ready</h1><p>Brand gate → check-in → DNA → calendar/shelf → trust → rewards. API: {import.meta.env.VITE_API_URL}</p></div>;}
