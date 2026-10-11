@@ -1,3 +1,3 @@
 const mongoose=require('mongoose');
-const Checkin=new mongoose.Schema({brand:{type:String,enum:['Be Bodywise','Little Joys','Man Matters','Root Labs'],required:true},picks:{type:Object,required:true},dna:{type:Object,required:true},household:{type:String,default:'default'},createdAt:{type:Date,default:Date.now}});
-module.exports=mongoose.model('Checkin',Checkin);
+const Entry=new mongoose.Schema({ts:{type:Date,required:true},day:{type:String,required:true},picks:{type:Object,required:true},dna:{type:Object},identity:{type:Object},note:{type:String,default:''},productUse:{type:Boolean,default:false},source:{type:String,default:'app'}},{_id:false});
+module.exports=mongoose.model('Checkin',new mongoose.Schema({household:{type:String,default:'default'},brandPref:{type:String,default:'Be Bodywise'},entries:{type:[Entry],default:[]},updatedAt:{type:Date,default:Date.now}}));
