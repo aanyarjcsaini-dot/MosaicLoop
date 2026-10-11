@@ -9,7 +9,7 @@ export const IDENTITIES=[
 export function dnaOf(picks){const m={};Q.forEach(q=>{if(picks[q.k]!=null)m[q.k]=q.v[picks[q.k]]];});return m;}
 export function identityFor(d,hist=[]){
 if(!d||Object.keys(d).length<3)return{id:'new-leaf',name:'New Leaf',blurb:'A fresh reflection — keep checking in.'};
-for(const id of IDENTITIES){try{if(id.test(d))return{id:id.id,name:id.name,blurb:id.blurb};}catch{}}
+for(const id of IDENTITIES){let ok=false;try{ok=id.test(d);}catch(e){ok=false;}if(ok)return{id:id.id,name:id.name,blurb:id.blurb};}
 return{id:'steady-builder',name:'Steady Builder',blurb:'Building quietly, one day at a time.'};
 }
 export function localDay(d=new Date()){const p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;}
