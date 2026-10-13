@@ -9,6 +9,8 @@ h1,h2,h3{font-family:'Fraunces',serif}
 .menubtn{border:1px solid #E9E3D6;background:#fff;border-radius:14px;min-width:44px;min-height:44px;font-size:20px;font-weight:800;letter-spacing:1px;line-height:1}
 .avatar{width:40px;height:40px;border-radius:99px;border:1px solid #E9E3D6;background:#E3F3E9;color:#0E3B2E;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center}
 .avatar.big{width:52px;height:52px;font-size:20px}
+.fairywave{display:inline-block;animation:wave2 1.8s ease-in-out 2;transform-origin:50% 80%}
+@keyframes wave2{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) translateY(-3px)}50%{transform:rotate(10deg)}75%{transform:rotate(-6deg)}}
 .profilemenu{position:absolute;top:48px;right:0;width:250px;max-width:72vw;background:#fff;border:1px solid #E9E3D6;border-radius:20px;box-shadow:0 20px 50px rgba(14,59,46,.18);padding:14px;z-index:55}
 .pside{position:fixed;top:0;bottom:0;right:0;width:300px;max-width:86vw;background:#fff;border-left:1px solid #E9E3D6;box-shadow:-20px 0 60px rgba(14,59,46,.18);padding:20px 16px;z-index:55;transform:translateX(110%);visibility:hidden;pointer-events:none;transition:transform .25s ease,visibility 0s linear .25s;overflow:auto}
 .pside.open{transform:translateX(0);visibility:visible;pointer-events:auto;transition:transform .25s ease}

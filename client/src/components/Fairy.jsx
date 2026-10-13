@@ -1,6 +1,6 @@
-export default function Fairy(size){
-const s=size||52;
-return<svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="AI Wellness Fairy">
+export default function Fairy(props){
+const s=(props&&props.size)||52;const wave=props&&props.wave;
+const svg=<svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="AI Wellness Fairy">
 <ellipse cx="18" cy="24" rx="11" ry="15" fill="#BFE6D2" opacity=".95" transform="rotate(-18 18 24)"/>
 <ellipse cx="46" cy="24" rx="11" ry="15" fill="#D9F3E5" opacity=".95" transform="rotate(18 46 24)"/>
 <ellipse cx="18" cy="24" rx="5" ry="8" fill="#E7F7EE" opacity=".9" transform="rotate(-18 18 24)"/>
@@ -14,4 +14,6 @@ return<svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="AI We
 <path d="M12 10 l1.2 2.6 2.6 1.2 -2.6 1.2 -1.2 2.6 -1.2 -2.6 -2.6 -1.2 2.6 -1.2 z" fill="#E8A13D"/>
 <circle cx="53" cy="10" r="1.6" fill="#C86B8A"/><circle cx="56" cy="46" r="1.6" fill="#E8A13D"/>
 </svg>;
+if(wave){return<span className="fairywave">{svg}</span>;}
+return svg;
 }
