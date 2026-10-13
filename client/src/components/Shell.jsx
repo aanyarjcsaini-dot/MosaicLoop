@@ -1,6 +1,5 @@
-import {useEffect} from 'react';import {Home,ShoppingBag,CalendarCheck,ChartNoAxesColumnIncreasing,Sparkles,UsersRound,Images,Settings,Menu,X,CalendarDays,Compass} from 'lucide-react';import {useApp} from '../store.js';import Fairy from './Fairy.jsx';import Profile from './Profile.jsx';
-const MAIN=[['home','Home',Home],['shelf','My Shelf',ShoppingBag],['checkin','Check-in',CalendarCheck],['insights','Wellness Insights',ChartNoAxesColumnIncreasing],['ai','AI Wellness Friend',Sparkles],['family','Family & Friends',UsersRound],['album','Album',Images],['settings','Settings',Settings]];
-const MORE=[['calendar','Calendar',CalendarDays],['discover','Discover',Compass]];
+import {useEffect} from 'react';import {Home,ShoppingBag,ChartNoAxesColumnIncreasing,UsersRound,Images,Settings,Menu,X,CalendarDays,Compass} from 'lucide-react';import {useApp} from '../store.js';import Fairy from './Fairy.jsx';import Profile from './Profile.jsx';
+const MAIN=[['home','Home',Home],['insights','Wellness Insights',ChartNoAxesColumnIncreasing],['calendar','Calendar',CalendarDays],['shelf','My Shelf',ShoppingBag],['album','Album',Images],['family','Family & Friends',UsersRound],['discover','Discover',Compass],['settings','Settings',Settings]];
 function Mark(){
 return<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="11" cy="11" r="8" fill="#E9E1F5"/><circle cx="23" cy="11" r="8" fill="#FFF5D9" stroke="#D9CCE9"/><circle cx="11" cy="23" r="8" fill="#D8B8CA"/><circle cx="23" cy="23" r="8" fill="#A8BCA4"/><circle cx="17" cy="17" r="4" fill="#FFFCF6"/></svg>;
 }
@@ -21,8 +20,6 @@ return<div className="shell">
 <aside className={'side'+(sideCollapsed&&desktop?' collapsed':'')+(sideOpen&&!desktop?' open':'')} aria-label="Main navigation">
 <div className="brandmark"><Mark/><b>Mosaic Loop</b></div>
 {items(MAIN)}
-<div className="navsec">More</div>
-{items(MORE)}
 </aside>
 {sideOpen&&!desktop&&<div className="backdrop" onClick={function(){setSideOpen(false);}}/>}
 <div className={'main'+(sideCollapsed&&desktop?' wide':'')}>
