@@ -1,5 +1,5 @@
 import {useApp} from '../store.js';import Fairy from './Fairy.jsx';
-const TABS=[['home','Home'],['calendar','Calendar'],['shelf','Shelf'],['family','Family'],['discover','Discover']];
+const TABS=[['home','Home'],['calendar','Calendar'],['shelf','Shelf'],['album','Album'],['family','Family'],['discover','Discover']];
 export default function Shell({children}){
 const{tab,setTab,buddy,setBuddy}=useApp();
 return<div className="shell">

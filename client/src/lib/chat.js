@@ -1,13 +1,14 @@
 // Rule brain with real app context. Single swap point: callLLM(messages,ctx).
 function ctx(){
-let entries=[],items=[],fb=[];
+let entries=[],items=[],fb=[],album=[];
 try{entries=JSON.parse(localStorage.getItem('entries')||'[]');}catch(e){entries=[];}
 try{items=JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){items=[];}
 try{fb=JSON.parse(localStorage.getItem('feedback')||'[]');}catch(e){fb=[];}
+try{album=JSON.parse(localStorage.getItem('album')||'[]');}catch(e){album=[];}
 const sorted=entries.slice().sort(function(a,b){return a.ts<b.ts?-1:1;});
 const last=sorted[sorted.length-1]||null;
 return{entries:last?{ts:last.ts,day:last.day,picks:last.picks,identity:last.identity}:null,
-counts:{checkins:entries.length,confirmedUses:items.reduce(function(a,i){return a+((i.confirmations||[]).length);},0),feedback:fb.length}};
+counts:{checkins:entries.length,confirmedUses:items.reduce(function(a,i){return a+((i.confirmations||[]).length);},0),feedback:fb.length,albums:album.length,photos:album.reduce(function(a,x){return a+((x.photos||[]).length);},0)}};
 }
 function signalOf(text){
 const l=text.toLowerCase();
@@ -41,6 +42,9 @@ if(['marry','marriage','wedding','election','politics','stock','crypto','job off
 return{options:[],text:'I stay in wellness only — sleep, mood, energy, food, skin, hair, stress. Tell me how you feel today?'};}
 if(['severe','bleed','chest pain','depress','suicid','bald patch','heavy hairfall'].some(function(k){return l.indexOf(k)>=0;})){
 return{options:['See a doctor'],text:'That sounds heavy — I will not guess. A fixed-price consult (no per-minute meter) with free follow-up fits here. I noted your recent '+(c.entries?('check-in on '+c.entries.day):'logs')+' for them.'};}
+if(l.indexOf('album')>=0||l.indexOf('photo')>=0||l.indexOf('progress pic')>=0||l.indexOf('compare')>=0){
+const n=c.counts.albums,ph=c.counts.photos;
+return{options:['Add This Week’s Photos','How do I compare?'],text:n?('Your album holds '+n+' '+(n===1?'entry':'entries')+' and '+ph+' private '+(ph===1?'photo':'photos')+'. Open Album → tap any two thumbnails → Compare for a dated side-by-side. I never judge the photos — archive only.'):'Your album is empty — open the Album tab, pick skin or hair, and add this week’s photos. Same light, same angle, no filters.'};}
 const s=signalOf(q);
 if(l.indexOf('why')>=0&&(l.indexOf('owl')>=0||l.indexOf('bunny')>=0||l.indexOf('today')>=0)){
 const p=c.entries?(c.entries.picks||{}):{};const bits=[];

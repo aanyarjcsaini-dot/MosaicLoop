@@ -1,8 +1,9 @@
-import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {Q,dnaOf,driversOf,identityFor,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import Petals,{Ring} from '../components/Visuals.jsx';
+import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {useApp} from '../store.js';import {Q,dnaOf,driversOf,identityFor,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import Petals,{Ring} from '../components/Visuals.jsx';
 const API=import.meta.env.VITE_API_URL||'http://localhost:5000/api';
 function load(){try{return JSON.parse(localStorage.getItem('entries')||'null')||seedHist();}catch(e){return seedHist();}}
 export default function Home(){
-const[entries,setEntries]=useState(load);
+const entries0=load();const[entries,setEntries]=useState(entries0);
+const tabGo=useApp(function(s){return s.setTab;});
 const[step,setStep]=useState(0);const[cur,setCur]=useState({});
 const[stage,setStage]=useState('ask');const[usedPick,setUsedPick]=useState(null);
 const[msg,setMsg]=useState('');const fact=useMemo(dailyFact,[]);
@@ -32,6 +33,7 @@ return<div style={{display:'grid',gap:12}}>
 <div className="card"><h2 style={{fontFamily:'Fraunces,serif',margin:'4px 0'}}>Hey, how are you today?</h2>
 <p className="muted">6 quick taps. Your mirror, not a medical test.</p></div>
 <div className="card" style={{background:'linear-gradient(135deg,#FFF7EA,#FFE7CF)'}}><small className="muted">DID YOU KNOW? • {fact.cat}</small><p><b>{fact.title}</b></p><p className="muted">{fact.why}</p><p className="muted">Source: {fact.source}</p></div>
+<div className="card" style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:8}}><div><b>Progress Album 📸</b><p className="muted" style={{margin:0}}>{function(){try{const a=JSON.parse(localStorage.getItem('album')||'[]');if(!a.length){return'Weekly photos, private to you';}const l=a.slice().sort(function(x,y){return x.day<y.day?-1:1;});const last=l[l.length-1];return'Latest: '+last.day+' • '+l.length+' '+(l.length===1?'entry':'entries');}catch(e){return'Weekly photos, private to you';}}()}</p></div><button className="btn" onClick={function(){tabGo('album');}}>Open</button></div>
 {stage==='ask'&&<div className="card"><p className="muted">Question {step+1}/{Q.length}</p>
 <div style={{height:8,background:'#ECE4D4',borderRadius:99}}><div style={{width:((step+1)/Q.length*100)+'%',height:'100%',background:'#0E3B2E',borderRadius:99}}/></div>
 <h3>{q.t}</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{q.o.map(function(o,i){return<button key={o} className="chip" onClick={function(){pick(i);}}>{q.e[i]} {o}</button>;})}</div></div>}
