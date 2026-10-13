@@ -23,6 +23,10 @@ const d=dnaOf(cur);const id=identityFor(d,{streak:w.current});
 const ts=new Date().toISOString();
 const entry={id:'e'+Date.now(),ts:ts,day:ts.slice(0,10),picks:cur,dna:d,identity:{id:id.id,name:id.name,icon:id.icon,color:id.color},productUse:usedPick==='yes'};
 setEntries(function(es){return [...es,entry];});
+if(usedPick==='yes'){try{const sh=JSON.parse(localStorage.getItem('shelf2')||'[]');let changed=false;
+const day=ts.slice(0,10);
+sh.forEach(function(it){it.confirmations=it.confirmations||[];if(it.confirmations.indexOf(day)<0){it.confirmations.push(day);changed=true;}});
+if(changed){localStorage.setItem('shelf2',JSON.stringify(sh));localStorage.setItem('shelf',JSON.stringify(sh));}}catch(e){}}
 setCur({});setStep(0);setUsedPick(null);setStage('done');setMsg('Saved — DNA updated instantly');
 try{axios.post(API+'/checkins/entry',{household:'default',brandPref:localStorage.getItem('brandPref')||'Be Bodywise',entry:entry}).catch(function(){});}catch(e){}
 };

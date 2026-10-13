@@ -25,6 +25,6 @@ export function dueForPrompt(item,prod,today=dayKey()){
 const e=estimate(item,prod,today);if(e.state!=='ok')return e.state==='depleted';
 if(item.snoozeUntil&&item.snoozeUntil>today)return false;
 if(item.lastPrompt&&daysBetween(item.lastPrompt,today)<3)return false;
-return e.remaining<=(prod.thresholdDays||7);}
+return e.remaining<=(prod.thresholdDays||5);}
 // product-use streak days derived from confirmations across items
 export function productUseDays(items){const s=new Set();items.forEach(it=>(it.confirmations||[]).forEach(d=>s.add(d)));return[...s].sort();}
