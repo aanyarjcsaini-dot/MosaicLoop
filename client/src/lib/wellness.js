@@ -52,3 +52,43 @@ const v=function(b){return Math.max(15,Math.min(95,b+((i*7)%9)-4));};
 const dd=new Date(d);dd.setHours(9,5,0,0);
 h.push({id:'seed-'+i,ts:dd.toISOString(),day:localDay(d),picks:{sleep:i%4,energy:(i+1)%4,mood:i%4,stress:(i%3),food:1,skin:1},note:'',demo:true});}
 return h;}
+function recentEntries(entries,n){const cut=new Date();cut.setDate(cut.getDate()-n);return entries.filter(function(e){return new Date(e.ts)>=cut;});}
+function idxVals(list,key){const out=[];for(let i=0;i<list.length;i++){const p=list[i].picks||{};const v=p[key];if(v===0||v){out.push(v);}}return out;}
+function avg(a){if(!a.length){return -1;}let s=0;for(let i=0;i<a.length;i++){s+=a[i];}return s/a.length;}
+export function patternBullets(entries){
+const r=recentEntries(entries,14);
+if(r.length<3){return[];}
+const out=[];
+const sl=idxVals(r,'sleep');
+if(sl.length>=3){let mn=sl[0],mx=sl[0];for(let i=1;i<sl.length;i++){if(sl[i]<mn){mn=sl[i];}if(sl[i]>mx){mx=sl[i];}}
+if(mx-mn>=2){out.push('Sleep answers swung across the week — restful nights mixed with rough ones.');}
+else if(avg(sl)>=2){out.push('Late or rough nights outnumber restful ones lately.');}
+else{out.push('Sleep has been fairly steady across recent check-ins.');}}
+const en=idxVals(r,'energy');
+if(en.length>=3){const half=Math.floor(en.length/2);const a=en.slice(0,half),b=en.slice(half);
+if(avg(b)>avg(a)+0.4){out.push('Energy is trending upward across recent days.');}
+else if(avg(a)>avg(b)+0.4){out.push('Energy has been dipping across recent days.');}}
+const st=idxVals(r,'stress');let load=0;for(let i=0;i<st.length;i++){if(st[i]>=2){load++;}}
+if(st.length>=3&&load>=Math.ceil(st.length/2)){out.push('Loaded or fried stress showed up in most recent check-ins.');}
+const days={};r.forEach(function(e){days[e.day]=1;});
+const n=Object.keys(days).length;
+if(n>=5){out.push('Checked in '+n+' distinct days — a steady rhythm.');}
+return out.slice(0,3);
+}
+export function describeIdentity(id,entries){
+const r=recentEntries(entries,14);
+if(r.length<3){return{line:'Early days — a few more check-ins and clear patterns will appear here.',tip:'Tonight, try one anchor: same bedtime, screens off 20 minutes before.'};}
+const sl=idxVals(r,'sleep');const inconsistent=(function(){if(sl.length<3){return false;}let mn=sl[0],mx=sl[0];for(let i=1;i<sl.length;i++){if(sl[i]<mn){mn=sl[i];}if(sl[i]>mx){mx=sl[i];}}return mx-mn>=2;})();
+const n=r.length;
+if(id==='calm-cloud'){
+if(inconsistent){return{line:'Your recent responses show a calm routine across '+n+' check-ins, though sleep timing wobbles.',tip:'Tomorrow, keep one bedtime and unwind five minutes before it.'};}
+return{line:'Your recent responses show a calm routine across '+n+' check-ins with steady sleep.',tip:'Tomorrow, protect it: same wind-down, same bedtime.'};}
+if(id==='sleepy-owl'){
+if(inconsistent){return{line:'Your check-ins link low energy days to an unsteady sleep routine.',tip:'Tomorrow, fix one thing: same bedtime, screens off 20 minutes before.'};}
+return{line:'Low energy is showing up even though sleep looks steady — food and movement may matter more right now.',tip:'Tomorrow, try a daylight walk and regular meals.'};}
+if(id==='energy-bunny'){return{line:'High-energy days are clustering — your routine is feeding them.',tip:'Tomorrow, anchor it: morning light and the same bedtime.'};}
+if(id==='sunshine-soul'){return{line:'Bright moods are arriving with good energy and calmer days.',tip:'Tomorrow, repeat what worked: protect sleep and one calm hour.'};}
+if(id==='recharging-star'){return{line:'Depletion is showing despite rest — recovery itself is the work right now.',tip:'Tomorrow, one tiny anchor only: water plus a ten-minute walk.'};}
+if(id==='consistency-champ'){return{line:'Steady check-ins with steady signals — discipline is compounding.',tip:'Tomorrow, keep just the anchor habit; streaks survive ordinary days.'};}
+return{line:'Your recent check-ins are building a baseline — patterns sharpen with each day.',tip:'Tomorrow, one anchor: same bedtime.'};
+}
