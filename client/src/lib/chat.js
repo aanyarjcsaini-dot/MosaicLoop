@@ -1,34 +1,57 @@
 // Rule brain with real app context. Single swap point: callLLM(messages,ctx).
-import {identityFor} from './wellness.js';
-export function context(){
+function ctx(){
 let entries=[],items=[],fb=[];
-try{entries=JSON.parse(localStorage.getItem('entries')||'[]');}catch{entries=[];}
-try{items=JSON.parse(localStorage.getItem('shelf2')||'[]');}catch{items=[];}
-try{fb=JSON.parse(localStorage.getItem('feedback')||'[]');}catch{fb=[];}
-const last=[...entries].sort((a,b)=>a.ts<b.ts?-1:1).pop()||null;
-return{entries:last?{ts:last.ts,day:last.day,picks:last.picks,identity:last.identity,note:last.note}:null,
-counts:{checkins:entries.length,confirmedUses:items.flatMap(i=>i.confirmations||[]).length,feedback:fb.length},
-shelf:items.map(i=>({pid:i.pid,start:i.startDate,conf:(i.confirmations||[]).length}))};
+try{entries=JSON.parse(localStorage.getItem('entries')||'[]');}catch(e){entries=[];}
+try{items=JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){items=[];}
+try{fb=JSON.parse(localStorage.getItem('feedback')||'[]');}catch(e){fb=[];}
+const sorted=entries.slice().sort(function(a,b){return a.ts<b.ts?-1:1;});
+const last=sorted[sorted.length-1]||null;
+return{entries:last?{ts:last.ts,day:last.day,picks:last.picks,identity:last.identity}:null,
+counts:{checkins:entries.length,confirmedUses:items.reduce(function(a,i){return a+((i.confirmations||[]).length);},0),feedback:fb.length}};
 }
-const ALLOW=['sleep','mood','energy','nutrition','skin','hair','activity','stress','hydration'];
-export const QUICK_FEEL=['Happy','Tired','Stressed','Calm','Energetic','Something else'];
-export const QUICK_HELP=['Understand my DNA','Review trends','Track habits','Check product usage','Find a product','When to restock','Explore rewards','Something else'];
-export async function chatReply(q,hist=[]){
-const ctx=context();const l=q.toLowerCase();
-if(['marry','marriage','wedding','election','politics','stock','crypto','job offer'].some(k=>l.includes(k)))
-return{chips:[],text:`Wellness only — I can use your actual logs for sleep, mood, energy, nutrition, skin, hair, activity, stress, hydration.`};
-if(['severe','bleed','chest pain','depress','suicid','bald patch','heavy hairfall'].some(k=>l.includes(k)))
-return{chips:['See doctor'],text:`That sounds heavy — I won't diagnose. Fixed ₹299 consult, free follow-up. I noted your recent ${ctx.entries?'check-in '+ctx.entries.day:'logs'} for them.`,escalate:true};
-if(l.includes('why')&&(l.includes('sleepy owl')||l.includes('owl')||l.includes('today'))){
-const p=ctx.entries?.picks||{};const bits=[];if(p.sleep!=null)bits.push(`sleep=${['deep','okay','late','rough'][p.sleep]}`);if(p.energy!=null)bits.push(`energy=${['full','half','low','empty'][p.energy]}`);
-return{chips:['Sleep ↓','Energy ↓'],text:bits.length?`Sleepy Owl today from your log (${ctx.entries.day}): ${bits.join(', ')}. Records, not guess. Want a 7-day trend?`:`No check-in yet today — log once and I'll ground it.`};}
-const found=ALLOW.filter(k=>l.includes(k));
-if(found.length)return{chips:found.slice(0,4).map(k=>k+' •'),text:`From your ${ctx.counts.checkins} check-ins / ${ctx.counts.confirmedUses} confirmed uses: ${found.join(', ')} noted. ${followUp(found)} (estimates labeled, history real).`};
-return{chips:QUICK_FEEL.slice(0,4),text:`I can read your DNA, trends, shelf, restock and rewards — all from your logs. What: DNA, trends, habits, usage, product, restock, rewards?`};
+function signalOf(text){
+const l=text.toLowerCase();
+if(l.indexOf('sleep')>=0||l.indexOf('insomnia')>=0||l.indexOf('awake')>=0){return'sleep';}
+if(l.indexOf('stress')>=0||l.indexOf('anxious')>=0||l.indexOf('overthink')>=0||l.indexOf('worry')>=0||l.indexOf('pressure')>=0){return'stress';}
+if(l.indexOf('eat')>=0||l.indexOf('food')>=0||l.indexOf('diet')>=0||l.indexOf('appetite')>=0){return'food';}
+if(l.indexOf('skin')>=0||l.indexOf('pimple')>=0||l.indexOf('acne')>=0||l.indexOf('breakout')>=0||l.indexOf('rash')>=0){return'skin';}
+if(l.indexOf('hair')>=0||l.indexOf('hairfall')>=0||l.indexOf('shed')>=0||l.indexOf('bald')>=0){return'hair';}
+if(l.indexOf('tired')>=0||l.indexOf('exhaust')>=0||l.indexOf('energy')>=0||l.indexOf('fatigue')>=0||l.indexOf('drained')>=0){return'energy';}
+if(l.indexOf('sad')>=0||l.indexOf('mood')>=0||l.indexOf('low')>=0||l.indexOf('down')>=0){return'mood';}
+return'general';
 }
-function followUp(f){
-if(f.includes('sleep'))return'Last 3 nights — late, broken, short?';
-if(f.includes('stress'))return'Driver — work, exams, travel, food?';
-return'What changed — travel, work, food, routine?';
+const CAUSES={
+energy:['Poor sleep','Stress or overthinking','Irregular eating habits','Changes in my body or routine','Something else'],
+sleep:['Late screen time','Stress or overthinking','Food or caffeine timing','Changes in my body or routine','Something else'],
+stress:['Work or exams','Family things','Sleep debt','Something else'],
+food:['Skipped meals','Junk phases','Low appetite','Something else'],
+skin:['A new product','Stress or less sleep','Food changes','Something in my routine','Something else'],
+hair:['A stressful phase','A new product','Diet change','Something else'],
+mood:['Less sleep','Stress load','Routine change','Something else'],
+general:['Poor sleep','Stress or overthinking','Irregular eating habits','Changes in my body or routine','Something else']};
+const FOLLOW={
+'Poor sleep':'How many nights has this lasted — days, weeks, or longer?',
+'Stress or overthinking':'What is weighing most — work, family, or sleep itself?',
+'Late screen time':'What time do you usually put the phone away?',
+'Sleep debt':'Want me to pull your 7-day sleep pattern from check-ins?',
+'A new product':'Which product, and how long have you used it? I can open its Honest Check.'};
+export async function chatReply(q){
+const c=ctx();const l=q.toLowerCase();
+if(['marry','marriage','wedding','election','politics','stock','crypto','job offer','exam result'].some(function(k){return l.indexOf(k)>=0;})){
+return{options:[],text:'I stay in wellness only — sleep, mood, energy, food, skin, hair, stress. Tell me how you feel today?'};}
+if(['severe','bleed','chest pain','depress','suicid','bald patch','heavy hairfall'].some(function(k){return l.indexOf(k)>=0;})){
+return{options:['See a doctor'],text:'That sounds heavy — I will not guess. A fixed-price consult (no per-minute meter) with free follow-up fits here. I noted your recent '+(c.entries?('check-in on '+c.entries.day):'logs')+' for them.'};}
+const s=signalOf(q);
+if(l.indexOf('why')>=0&&(l.indexOf('owl')>=0||l.indexOf('bunny')>=0||l.indexOf('today')>=0)){
+const p=c.entries?(c.entries.picks||{}):{};const bits=[];
+if(p.sleep===0||p.sleep){bits.push('sleep='+['deep','okay','late','rough'][p.sleep]);}
+if(p.energy===0||p.energy){bits.push('energy='+['full','half','low','empty'][p.energy]);}
+return{options:[],text:bits.length?('From your log ('+c.entries.day+'): '+bits.join(', ')+'. Records, not guesses. Want the 7-day trend?'):'No check-in today yet — log once and I will ground it.'};}
+const opts=CAUSES[s]||CAUSES.general;
+return{options:opts,text:'What do you think could be causing it? Pick what fits — or just tell me more.'};
 }
-// export async function callLLM(messages,ctx){ /* real LLM here */ }
+export async function chatFollow(choice){
+const q=(FOLLOW[choice]||'How long has this lasted — days, weeks, or longer?')+' Your logs ('+ctx().counts.checkins+' check-ins) stay in view as we talk.';
+return{options:['Days','Weeks','Months','Not sure'],text:q};
+}
+// export async function callLLM(messages,c){ /* real LLM here */ }
