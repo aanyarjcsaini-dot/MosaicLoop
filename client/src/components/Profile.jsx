@@ -1,7 +1,9 @@
-import {useEffect,useRef,useState} from 'react';import {useApp} from '../store.js';
+import {useEffect,useRef,useState} from 'react';import {useApp} from '../store.js';import {identityFor,dnaOf} from '../lib/wellness.js';
+function myIdentity(){try{const es=JSON.parse(localStorage.getItem('entries')||'[]');if(!es.length){return null;}
+const l=es.slice().sort(function(a,b){return a.ts<b.ts?-1:1;}).pop();return identityFor(l.dna||dnaOf(l.picks||{}),{streak:0});}catch(e){return null;}}
 function uid(){return' ml-'+Math.random().toString(36).slice(2,8).toUpperCase();}
 export default function Profile(){
-const{profile,signIn,signOut}=useApp();
+const{profile,signIn,signOut,setTab}=useApp();
 const[open,setOpen]=useState(false);
 const[nm,setNm]=useState('');const[em,setEm]=useState('');const[err,setErr]=useState('');
 const box=useRef(null);
@@ -24,7 +26,8 @@ return<div ref={box} style={{position:'relative',marginLeft:'auto'}}>
 <div style={{display:'flex',gap:12,alignItems:'center',marginTop:8}}><div className="avatar big">{profile?initial:'👤'}</div>
 <div>{profile?<div><b>{profile.name}</b><br/><span className="muted">@{profile.username}</span><br/><span className="muted">ID {profile.uid}</span></div>:<div><b>Guest</b><br/><span className="muted">Not signed in</span></div>}</div></div>
 {profile?<div style={{marginTop:8}}><p className="muted">Login: {profile.email} • Passwords are never shown.</p>
-<p className="muted">Settings: check-in reminders live in Shelf restock prompts for now.</p>
+{function(){const id=myIdentity();return id?<p><span style={{fontSize:20}}>{id.icon}</span> <b style={{color:id.color}}>{id.name}</b> <span className="muted">• current vibe</span></p>:<p className="muted">Check in once to grow your wellness identity.</p>;}()}
+<div style={{display:'grid',gap:6,margin:'8px 0'}}><button className="chip" onClick={function(){setOpen(false);}}>My Profile ✓</button><button className="chip" onClick={function(){setOpen(false);setTab('family');}}>Family & Friends →</button><button className="chip" onClick={function(){setOpen(false);setTab('settings');}}>App Preferences →</button></div>
 <button className="btn" style={{width:'100%'}} onClick={function(){signOut();setOpen(false);}}>Sign Out</button></div>
 :<div style={{display:'grid',gap:8,marginTop:8}}><input value={nm} onChange={function(e){setNm(e.target.value);}} placeholder="Full name" aria-label="Full name"/><input value={em} onChange={function(e){setEm(e.target.value);}} placeholder="Email" aria-label="Email" inputMode="email"/>{err&&<span className="muted">{err}</span>}
 <button className="btn" onClick={goIn}>Sign In</button><span className="muted">Local profile for now — server sign-in plugs into these same Sign In/Out buttons.</span></div>}

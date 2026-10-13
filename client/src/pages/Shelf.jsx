@@ -1,4 +1,4 @@
-import {useState} from 'react';import {PRODUCTS} from '../data/products.js';import {shelf,saveShelf,estimate,dayKey,logDay,confirmProduct,dueForPrompt,usageDays} from '../lib/shelf.js';import {streakDays} from '../lib/wellness.js';import {Ring} from '../components/Visuals.jsx';import Feedback from '../components/Feedback.jsx';
+import {useState} from 'react';import {ShoppingBag,Bell,Check} from 'lucide-react';import {PRODUCTS} from '../data/products.js';import {shelf,saveShelf,estimate,dayKey,logDay,confirmProduct,dueForPrompt,usageDays} from '../lib/shelf.js';import {streakDays} from '../lib/wellness.js';import {Ring} from '../components/Visuals.jsx';import Feedback from '../components/Feedback.jsx';
 export default function Shelf(){
 const[s,setS]=useState(shelf());const[ask,setAsk]=useState(null);const[fbFor,setFbFor]=useState(null);const[orderRef,setOrderRef]=useState('');
 const today=dayKey();
@@ -31,9 +31,9 @@ const usedIdx=[],restIdx=[];
 s.forEach(function(it,i){const p=PRODUCTS.find(function(x){return x.id===it.pid;});if(!p){return;}const e=estimate(it,p,today);
 if(e.state==='depleted'||(!it.muted&&dueForPrompt(it,p,today))){restIdx.push(i);}else{usedIdx.push(i);}});
 return<div style={{display:'grid',gap:12}}>
-<div className="card"><h3>🟢 Used — currently tracking</h3><p className="muted">Check-in “Yes” and Used-today taps land here automatically.</p></div>
+<div className="card"><h3><ShoppingBag size={18}/> Used — currently tracking</h3><p className="muted">Check-in “Yes” and Used-today taps land here automatically.</p></div>
 {usedIdx.length?usedIdx.map(function(i){return card(s[i],i);}):<div className="card"><p className="muted">Nothing here — add your first product below.</p></div>}
-<div className="card" style={{background:'linear-gradient(135deg,#FFF7EA,#FFE7CF)'}}><h3>🟠 Restock — low or finished</h3><p className="muted">Shows at ~5 days left. Purchase opens the official site; passing asks why.</p></div>
+<div className="card" style={{background:'linear-gradient(135deg,#FFF7EA,#FFE7CF)'}}><h3><Bell size={18}/> Restock — low or finished</h3><p className="muted">Shows at ~5 days left. Purchase opens the official site; passing asks why.</p></div>
 {restIdx.length?restIdx.map(function(i){return card(s[i],i);}):<div className="card"><p className="muted">All stocked up. Nothing needs restocking.</p></div>}
 <div className="card"><b>Add product</b><p className="muted">Purchases sync from verified orders; manual add for already-owned:</p><button className="btn" onClick={addDefault}>+ Add Biotin (started today)</button></div>
 <p className="muted">Estimates auto-update with time. Confirmations are explicit. Verified purchases only via sync/link.</p>
