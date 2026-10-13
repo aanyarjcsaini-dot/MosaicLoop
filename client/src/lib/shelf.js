@@ -21,6 +21,17 @@ function off(n){const d=new Date();d.setDate(d.getDate()-n);return dayKey(d);}
 export function saveShelf(s){localStorage.setItem('shelf',JSON.stringify(s));localStorage.setItem('shelf2',JSON.stringify(s));}
 export function confirmToday(item){const t=dayKey();const c=item.confirmations||[];if(c.includes(t))return item;
 return{...item,confirmations:[...c,t]};}
+export function usageMap(){try{return JSON.parse(localStorage.getItem('usage')||'{}');}catch(e){return{};}}
+export function usageDays(pid){const a=usageMap()[pid]||[];return a.slice().sort();}
+export function rawShelf(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){return[];}}
+export function confirmProduct(pid,day){
+const m=usageMap();const a=m[pid]||[];if(a.indexOf(day)<0){a.push(day);}m[pid]=a;
+localStorage.setItem('usage',JSON.stringify(m));
+const items=rawShelf();let changed=false;
+items.forEach(function(it){if(it.pid===pid){it.confirmations=it.confirmations||[];if(it.confirmations.indexOf(day)<0){it.confirmations.push(day);changed=true;}}});
+if(changed){saveShelf(items);}
+return items;
+}
 export function dueForPrompt(item,prod,today=dayKey()){
 const e=estimate(item,prod,today);if(e.state!=='ok')return e.state==='depleted';
 if(item.snoozeUntil&&item.snoozeUntil>today)return false;

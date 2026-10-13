@@ -19,7 +19,7 @@ signIn(nm,em);setNm('');setEm('');setErr('');setOpen(false);
 };
 return<div ref={box} style={{position:'relative',marginLeft:'auto'}}>
 <button className="avatar" aria-label="Profile and account" aria-expanded={open} onClick={function(){setOpen(!open);}}>{profile?initial:'👤'}</button>
-<div className={'pside'+(open?' open':'')} aria-hidden={!open}>
+{open&&<div className="pside open" role="dialog" aria-label="Account">
 <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><b>Account</b><button aria-label="Close account panel" onClick={function(){setOpen(false);}}>✕</button></div>
 <div style={{display:'flex',gap:12,alignItems:'center',marginTop:8}}><div className="avatar big">{profile?initial:'👤'}</div>
 <div>{profile?<div><b>{profile.name}</b><br/><span className="muted">@{profile.username}</span><br/><span className="muted">ID {profile.uid}</span></div>:<div><b>Guest</b><br/><span className="muted">Not signed in</span></div>}</div></div>
@@ -28,7 +28,6 @@ return<div ref={box} style={{position:'relative',marginLeft:'auto'}}>
 <button className="btn" style={{width:'100%'}} onClick={function(){signOut();setOpen(false);}}>Sign Out</button></div>
 :<div style={{display:'grid',gap:8,marginTop:8}}><input value={nm} onChange={function(e){setNm(e.target.value);}} placeholder="Full name" aria-label="Full name"/><input value={em} onChange={function(e){setEm(e.target.value);}} placeholder="Email" aria-label="Email" inputMode="email"/>{err&&<span className="muted">{err}</span>}
 <button className="btn" onClick={goIn}>Sign In</button><span className="muted">Local profile for now — server sign-in plugs into these same Sign In/Out buttons.</span></div>}
-</div>
-{open&&<div className="scrim" onClick={function(){setOpen(false);}}/>}
+</div>}
 </div>;
 }

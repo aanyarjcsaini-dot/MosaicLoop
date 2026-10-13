@@ -12,11 +12,14 @@ h1,h2,h3{font-family:'Fraunces',serif}
 .fairywave{display:inline-block;animation:wave2 1.8s ease-in-out 2;transform-origin:50% 80%}
 @keyframes wave2{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) translateY(-3px)}50%{transform:rotate(10deg)}75%{transform:rotate(-6deg)}}
 .profilemenu{position:absolute;top:48px;right:0;width:250px;max-width:72vw;background:#fff;border:1px solid #E9E3D6;border-radius:20px;box-shadow:0 20px 50px rgba(14,59,46,.18);padding:14px;z-index:55}
-.pside{position:fixed;top:0;bottom:0;right:0;width:300px;max-width:86vw;background:#fff;border-left:1px solid #E9E3D6;box-shadow:-20px 0 60px rgba(14,59,46,.18);padding:20px 16px;z-index:55;transform:translateX(110%);visibility:hidden;pointer-events:none;transition:transform .25s ease,visibility 0s linear .25s;overflow:auto}
-.pside.open{transform:translateX(0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
-.drawer{position:fixed;top:76px;left:50%;transform:translate(-50%,-135%);width:calc(100% - 24px);max-width:456px;background:#fff;border:1px solid #E9E3D6;border-radius:24px;box-shadow:0 20px 60px rgba(14,59,46,.18);padding:16px 12px;z-index:48;visibility:hidden;pointer-events:none;transition:transform .25s ease,visibility 0s linear .25s}
-.drawer.open{transform:translate(-50%,0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
-.tabrow{display:block;width:100%;border:none;background:none;text-align:left;font-size:14px;font-weight:800;color:#3A4A42;padding:13px 14px;border-radius:14px;min-height:44px}
+.pside{position:absolute;top:48px;right:0;width:290px;max-width:84vw;max-height:70vh;overflow:auto;background:#fff;border:1px solid #E9E3D6;border-radius:20px;box-shadow:0 20px 50px rgba(14,59,46,.18);padding:16px;z-index:55;opacity:0;transform:translateY(-8px);visibility:hidden;pointer-events:none;transition:opacity .2s ease,transform .2s ease,visibility 0s linear .2s}
+.pside.open{opacity:1;transform:none;visibility:visible;pointer-events:auto;transition:opacity .2s ease,transform .2s ease}
+.drawer{position:fixed;top:76px;left:max(12px,calc(50% - 228px));transform:translateY(-135%);width:250px;max-width:72vw;background:#fff;border:1px solid #E9E3D6;border-radius:20px;box-shadow:0 20px 60px rgba(14,59,46,.18);padding:10px;z-index:48;visibility:hidden;pointer-events:none;transition:transform .25s ease,visibility 0s linear .25s}
+.drawer.open{transform:translateY(0);visibility:visible;pointer-events:auto;transition:transform .25s ease}
+.tabrow{display:flex;align-items:center;gap:10px;width:100%;border:none;background:none;text-align:left;font-size:14px;font-weight:800;color:#3A4A42;padding:13px 14px;border-radius:14px;min-height:44px}
+.tabrow+.tabrow{border-top:1px solid #F3EEE2;border-radius:0}
+.tabrow:first-child{border-top:none}
+.tabrow:hover{background:#F7F5F0}
 .tabrow.on{color:#0E3B2E;background:#E3F3E9}
 .buddy{position:fixed;right:calc(50% - 240px + 16px);bottom:18px;width:52px;height:52px;border-radius:99px;background:#0E3B2E;color:#fff;font-size:24px;border:none;box-shadow:0 14px 30px rgba(0,0,0,.3);z-index:40}
 @media(max-width:520px){.buddy{right:16px}}
