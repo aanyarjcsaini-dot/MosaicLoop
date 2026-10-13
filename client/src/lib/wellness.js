@@ -8,12 +8,12 @@ export const Q=[
 function isHigh(d,k,cut){const v=d[k];return (v === 0 ? 0 : (v || 0)) >= cut;}
 function isLow(d,k,cut){const v=d[k];return (v === 0 ? 0 : (v || 0)) < cut;}
 export const IDENTITIES=[
-{id:'energy-bunny',name:'Energy Bunny',test:function(d){return isHigh(d,'energy',75);},blurb:'High energy today — ride the wave gently.'},
-{id:'sunshine-soul',name:'Sunshine Soul',test:function(d){return isHigh(d,'mood',75) && isHigh(d,'energy',60);},blurb:'Positive mood with good energy. Lovely combo.'},
-{id:'calm-cloud',name:'Calm Cloud',test:function(d){return isHigh(d,'stress',75);},blurb:'Calm and relaxed. Protect this peace.'},
-{id:'sleepy-owl',name:'Sleepy Owl',test:function(d){return isLow(d,'sleep',50);},blurb:'Your energy seems low today. Take things gently and focus on habits that help you feel refreshed.'},
-{id:'recharging-star',name:'Recharging Star',test:function(d){return isLow(d,'energy',35) && isHigh(d,'sleep',50);},blurb:'Feeling depleted despite rest — recovery mode is productive today.'},
-{id:'consistency-champ',name:'Consistency Champ',test:function(d,ctx){return ctx && ctx.streak >= 5 && isHigh(d,'sleep',55) && isHigh(d,'energy',55) && isHigh(d,'mood',55);},blurb:'Steady check-ins and steady signals. Quiet discipline.'}];
+{id:'energy-bunny',name:'Energy Bunny',icon:'🐰',color:'#16A34A',test:function(d){return isHigh(d,'energy',75);},blurb:'High energy today — ride the wave gently.'},
+{id:'sunshine-soul',name:'Sunshine Soul',icon:'☀️',color:'#D97706',test:function(d){return isHigh(d,'mood',75) && isHigh(d,'energy',60);},blurb:'Positive mood with good energy. Lovely combo.'},
+{id:'calm-cloud',name:'Calm Cloud',icon:'☁️',color:'#0284C7',test:function(d){return isHigh(d,'stress',75);},blurb:'Calm and relaxed. Protect this peace.'},
+{id:'sleepy-owl',name:'Sleepy Owl',icon:'🦉',color:'#4F46E5',test:function(d){return isLow(d,'sleep',50);},blurb:'Your energy seems low today. Take things gently and focus on habits that help you feel refreshed.'},
+{id:'recharging-star',name:'Recharging Star',icon:'⭐',color:'#7C3AED',test:function(d){return isLow(d,'energy',35) && isHigh(d,'sleep',50);},blurb:'Feeling depleted despite rest — recovery mode is productive today.'},
+{id:'consistency-champ',name:'Consistency Champ',icon:'🏅',color:'#059669',test:function(d,ctx){return ctx && ctx.streak >= 5 && isHigh(d,'sleep',55) && isHigh(d,'energy',55) && isHigh(d,'mood',55);},blurb:'Steady check-ins and steady signals. Quiet discipline.'}];
 export function dnaOf(picks){const m={};for(let i=0;i<Q.length;i++){const q=Q[i];const idx=picks[q.k];if(idx === 0 || idx){m[q.k]=q.v[idx];}}return m;}
 export function driversOf(picks){
 const out=[];const LBL={sleep:'Sleep',energy:'Energy',mood:'Mood',stress:'Stress',food:'Food',skin:'Skin'};
@@ -21,9 +21,15 @@ for(let i=0;i<Q.length;i++){const q=Q[i];const idx=picks[q.k];if(idx === 0 || id
 out.sort(function(a,b){return a.score-b.score;});return out;
 }
 export function identityFor(d,ctx){
-if(!d || Object.keys(d).length < 3){return{id:'new-leaf',name:'New Leaf',blurb:'A fresh reflection — keep checking in.'};}
-for(let i=0;i<IDENTITIES.length;i++){const id=IDENTITIES[i];let ok=false;try{ok=id.test(d,ctx);}catch(e){ok=false;}if(ok){return{id:id.id,name:id.name,blurb:id.blurb};}}
-return{id:'steady-builder',name:'Steady Builder',blurb:'Building quietly, one day at a time.'};
+if(!d || Object.keys(d).length < 3){return{id:'new-leaf',name:'New Leaf',icon:'🌱',color:'#65A30D',blurb:'A fresh reflection — keep checking in.'};}
+for(let i=0;i<IDENTITIES.length;i++){const id=IDENTITIES[i];let ok=false;try{ok=id.test(d,ctx);}catch(e){ok=false;}if(ok){return{id:id.id,name:id.name,icon:id.icon,color:id.color,blurb:id.blurb};}}
+return{id:'steady-builder',name:'Steady Builder',icon:'🧱',color:'#57534E',blurb:'Building quietly, one day at a time.'};
+}
+export function weekDist(entries){
+const cut=new Date();cut.setDate(cut.getDate()-7);
+const dims={};const total={};
+entries.forEach(function(e){if(new Date(e.ts)<cut){return;}const p=e.picks||{};Object.keys(p).forEach(function(k){total[k]=(total[k]||0)+1;if(p[k]<=1){dims[k]=(dims[k]||0)+1;}});});
+return Object.keys(total).map(function(k){return{key:k,pct:Math.round((dims[k]||0)/total[k]*100)};}).sort(function(a,b){return a.pct-b.pct;});
 }
 export function localDay(d){const dt=d || new Date();function p(n){return String(n).padStart(2,'0');}return dt.getFullYear() + '-' + p(dt.getMonth()+1) + '-' + p(dt.getDate());}
 export function qualifyingWellness(entry){return entry && entry.picks && Object.keys(entry.picks).length >= 4;}

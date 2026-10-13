@@ -1,4 +1,5 @@
 import {useEffect,useRef,useState} from 'react';import {useApp} from '../store.js';
+function uid(){return' ml-'+Math.random().toString(36).slice(2,8).toUpperCase();}
 export default function Profile(){
 const{profile,signIn,signOut}=useApp();
 const[open,setOpen]=useState(false);
@@ -17,13 +18,17 @@ if(!nm.trim()||em.indexOf('@')<0){setErr('Enter a name and a valid email.');retu
 signIn(nm,em);setNm('');setEm('');setErr('');setOpen(false);
 };
 return<div ref={box} style={{position:'relative',marginLeft:'auto'}}>
-<button className="avatar" aria-label="Profile menu" aria-expanded={open} onClick={function(){setOpen(!open);}}>{profile?initial:'👤'}</button>
-{open&&<div className="profilemenu" role="menu">
-<div style={{display:'flex',gap:10,alignItems:'center'}}><div className="avatar big">{profile?initial:'👤'}</div>
-<div>{profile?<div><b>{profile.name}</b><br/><span className="muted">{profile.email}</span></div>:<div><b>Guest</b><br/><span className="muted">Not signed in</span></div>}</div></div>
-{profile?<><p className="muted">Signed in on this device. Passwords are never shown.</p><button className="btn" style={{width:'100%'}} onClick={function(){signOut();setOpen(false);}}>Sign Out</button></>
-:<><div style={{display:'grid',gap:8,marginTop:8}}><input value={nm} onChange={function(e){setNm(e.target.value);}} placeholder="Name" aria-label="Name"/><input value={em} onChange={function(e){setEm(e.target.value);}} placeholder="Email" aria-label="Email" inputMode="email"/>{err&&<span className="muted">{err}</span>}
-<button className="btn" onClick={goIn}>Sign In</button><span className="muted">Local profile for now — server sign-in plugs in here.</span></div></>}
-</div>}
+<button className="avatar" aria-label="Profile and account" aria-expanded={open} onClick={function(){setOpen(!open);}}>{profile?initial:'👤'}</button>
+<div className={'pside'+(open?' open':'')} aria-hidden={!open}>
+<div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><b>Account</b><button aria-label="Close account panel" onClick={function(){setOpen(false);}}>✕</button></div>
+<div style={{display:'flex',gap:12,alignItems:'center',marginTop:8}}><div className="avatar big">{profile?initial:'👤'}</div>
+<div>{profile?<div><b>{profile.name}</b><br/><span className="muted">@{profile.username}</span><br/><span className="muted">ID {profile.uid}</span></div>:<div><b>Guest</b><br/><span className="muted">Not signed in</span></div>}</div></div>
+{profile?<div style={{marginTop:8}}><p className="muted">Login: {profile.email} • Passwords are never shown.</p>
+<p className="muted">Settings: check-in reminders live in Shelf restock prompts for now.</p>
+<button className="btn" style={{width:'100%'}} onClick={function(){signOut();setOpen(false);}}>Sign Out</button></div>
+:<div style={{display:'grid',gap:8,marginTop:8}}><input value={nm} onChange={function(e){setNm(e.target.value);}} placeholder="Full name" aria-label="Full name"/><input value={em} onChange={function(e){setEm(e.target.value);}} placeholder="Email" aria-label="Email" inputMode="email"/>{err&&<span className="muted">{err}</span>}
+<button className="btn" onClick={goIn}>Sign In</button><span className="muted">Local profile for now — server sign-in plugs into these same Sign In/Out buttons.</span></div>}
+</div>
+{open&&<div className="scrim" onClick={function(){setOpen(false);}}/>}
 </div>;
 }
