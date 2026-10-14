@@ -1,4 +1,4 @@
-import {useEffect,useState} from 'react';import {Home,ShoppingBag,ChartNoAxesColumnIncreasing,UsersRound,Images,Settings,Menu,X,CalendarDays,Compass,Camera,Star,MoreHorizontal,Gift} from 'lucide-react';import {useApp} from '../store.js';import {Sparkles} from 'lucide-react';import Logo from './Logo.jsx';import Profile from './Profile.jsx';
+import {useEffect,useState} from 'react';import {Home,ShoppingBag,ChartNoAxesColumnIncreasing,UsersRound,Images,Settings,Menu,X,CalendarDays,Compass,Camera,Star,MoreHorizontal} from 'lucide-react';import {useApp} from '../store.js';import {Sparkles} from 'lucide-react';import Logo from './Logo.jsx';import Profile from './Profile.jsx';
 const MAIN=[['home','Home',Home],['insights','Wellness Insights',ChartNoAxesColumnIncreasing],['calendar','Calendar',CalendarDays],['shelf','My Shelf',ShoppingBag],['album','Album',Images],['family','Family & Friends',UsersRound],['discover','Discover',Compass],['reviews','Honest Reviews',Star],['settings','Settings',Settings]];
 const PILL=[['home','Home',Home],['insights','Insights',ChartNoAxesColumnIncreasing],['family','Family',UsersRound],['calendar','Calendar',CalendarDays]];
 export default function Shell(props){
@@ -37,10 +37,11 @@ return<div className="shell">
 return<button key={k} className={on?'on':''} aria-label={l} aria-current={on?'page':undefined} onClick={function(){go(k);}}><Icon size={22} strokeWidth={on?2.4:2}/></button>;})}
 <button aria-label="More destinations" onClick={function(){setMore(!more);}}><MoreHorizontal size={22}/></button>
 </nav>
-{more&&<><div className="scrim" onClick={function(){setMore(false);}}/><div className="sheet"><h3>More</h3><div className="moregrid">
-{[['shelf','My Shelf',ShoppingBag],['album','Album',Images],['discover','Discover',Compass],['reviews','Honest Reviews',Star],['settings','Settings',Settings]].map(function(t){const k=t[0],l=t[1],Icon=t[2];
+{more&&function(){const prim={};PILL.forEach(function(t){prim[t[0]]=1;});
+const rest=MAIN.filter(function(t){return !prim[t[0]];});
+return<><div className="scrim" onClick={function(){setMore(false);}}/><div className="sheet"><h3>More</h3><div className="moregrid">
+{rest.map(function(t){const k=t[0],l=t[1],Icon=t[2];
 return<button key={k} className="chip" style={{display:'flex',alignItems:'center',gap:8}} onClick={function(){go(k);}}><Icon size={18}/> {l}</button>;})}
-<button className="chip" style={{display:'flex',alignItems:'center',gap:8}} onClick={function(){go('family');}}><Gift size={18}/> Rewards</button>}
-</div><button className="btn" style={{marginTop:10}} onClick={function(){setMore(false);}}>Close</button></div></>}
+</div><button className="btn" style={{marginTop:10}} onClick={function(){setMore(false);}}>Close</button></div></>;}()}
 </div>;
 }
