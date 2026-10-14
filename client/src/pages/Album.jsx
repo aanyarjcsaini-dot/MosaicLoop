@@ -1,4 +1,4 @@
-import {useState} from 'react';import {Camera,Bell,BellOff} from 'lucide-react';import {CATS,catLabel,load,saveAll,setup,saveSetup,compress,milestones,insights} from '../lib/album.js';import {logDay,dayKey} from '../lib/shelf.js';
+import {useEffect,useState} from 'react';import {Camera,Bell,BellOff} from 'lucide-react';import {CATS,catLabel,load,saveAll,setup,saveSetup,compress,milestones,insights} from '../lib/album.js';import {logDay,dayKey} from '../lib/shelf.js';
 const TIPS=['Same lighting each week','Same angle and distance','No filters — originals only','Tie hair back for skin shots'];
 export default function Album(){
 const[entries,setEntries]=useState(load);const[st,setSt]=useState(setup);
@@ -23,6 +23,7 @@ const shown=entries.filter(function(e){return filter==='all'||e.cat===filter;}).
 const ms=milestones(entries);const ins=insights(entries);
 const next=function(){if(!entries.length){return'This week';}const last=entries.slice().sort(function(a,b){return b.day.localeCompare(a.day);})[0];const d=new Date(last.day);d.setDate(d.getDate()+7);return d.toISOString().slice(0,10);};
 const openAdd=function(){setErr('');setForm({id:null,cat:allowed[0],day:dayKey(),note:'',photos:[],keep:[]});};
+useEffect(function(){try{if(sessionStorage.getItem('album-autoadd')==='1'){sessionStorage.removeItem('album-autoadd');openAdd();}}catch(e){}},[]);
 const onFiles=function(ev){const files=ev.target.files;if(!files||!files.length){return;}
 const jobs=[];for(let i=0;i<files.length&&i<3;i++){jobs.push(compress(files[i]));}
 Promise.all(jobs).then(function(urls){setForm(function(f){return Object.assign({},f,{photos:f.photos.concat(urls).slice(0,3)});});}).catch(function(e){setErr(e.message);});};

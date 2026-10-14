@@ -8,12 +8,12 @@ export const Q=[
 function isHigh(d,k,cut){const v=d[k];return (v === 0 ? 0 : (v || 0)) >= cut;}
 function isLow(d,k,cut){const v=d[k];return (v === 0 ? 0 : (v || 0)) < cut;}
 export const IDENTITIES=[
-{id:'energy-bunny',name:'Energy Bunny',icon:'🐰',color:'#16A34A',test:function(d){return isHigh(d,'energy',75);},blurb:'High energy today — ride the wave gently.'},
-{id:'sunshine-soul',name:'Sunshine Soul',icon:'☀️',color:'#D97706',test:function(d){return isHigh(d,'mood',75) && isHigh(d,'energy',60);},blurb:'Positive mood with good energy. Lovely combo.'},
-{id:'calm-cloud',name:'Calm Cloud',icon:'☁️',color:'#0284C7',test:function(d){return isHigh(d,'stress',75);},blurb:'Calm and relaxed. Protect this peace.'},
-{id:'sleepy-owl',name:'Sleepy Owl',icon:'🦉',color:'#4F46E5',test:function(d){return isLow(d,'sleep',50);},blurb:'Your energy seems low today. Take things gently and focus on habits that help you feel refreshed.'},
-{id:'recharging-star',name:'Recharging Star',icon:'⭐',color:'#7C3AED',test:function(d){return isLow(d,'energy',35) && isHigh(d,'sleep',50);},blurb:'Feeling depleted despite rest — recovery mode is productive today.'},
-{id:'consistency-champ',name:'Consistency Champ',icon:'🏅',color:'#059669',test:function(d,ctx){return ctx && ctx.streak >= 5 && isHigh(d,'sleep',55) && isHigh(d,'energy',55) && isHigh(d,'mood',55);},blurb:'Steady check-ins and steady signals. Quiet discipline.'}];
+{id:'energy-bunny',name:'Energy Bunny',icon:'🐰',color:'#E8598B',blob:'#F8A8C8',mood:'happy',test:function(d){return isHigh(d,'energy',75);},blurb:'High energy today — ride the wave gently.'},
+{id:'sunshine-soul',name:'Sunshine Soul',icon:'☀️',color:'#B8860B',blob:'#FFE59A',mood:'happy',test:function(d){return isHigh(d,'mood',75) && isHigh(d,'energy',60);},blurb:'Positive mood with good energy. Lovely combo.'},
+{id:'calm-cloud',name:'Calm Cloud',icon:'☁️',color:'#4A90C2',blob:'#C7E5FF',mood:'calm',test:function(d){return isHigh(d,'stress',75);},blurb:'Calm and relaxed. Protect this peace.'},
+{id:'sleepy-owl',name:'Sleepy Owl',icon:'🦉',color:'#7C5CD6',blob:'#DCCEFF',mood:'sleepy',test:function(d){return isLow(d,'sleep',50);},blurb:'Your energy seems low today. Take things gently and focus on habits that help you feel refreshed.'},
+{id:'recharging-star',name:'Recharging Star',icon:'⭐',color:'#E0607E',blob:'#FF7F91',mood:'sleepy',test:function(d){return isLow(d,'energy',35) && isHigh(d,'sleep',50);},blurb:'Feeling depleted despite rest — recovery mode is productive today.'},
+{id:'consistency-champ',name:'Consistency Champ',icon:'🏅',color:'#4E9B6A',blob:'#C9EAD8',mood:'starry',test:function(d,ctx){return ctx && ctx.streak >= 5 && isHigh(d,'sleep',55) && isHigh(d,'energy',55) && isHigh(d,'mood',55);},blurb:'Steady check-ins and steady signals. Quiet discipline.'}];
 export function dnaOf(picks){const m={};for(let i=0;i<Q.length;i++){const q=Q[i];const idx=picks[q.k];if(idx === 0 || idx){m[q.k]=q.v[idx];}}return m;}
 export function driversOf(picks){
 const out=[];const LBL={sleep:'Sleep',energy:'Energy',mood:'Mood',stress:'Stress',food:'Food',skin:'Skin'};
@@ -21,9 +21,9 @@ for(let i=0;i<Q.length;i++){const q=Q[i];const idx=picks[q.k];if(idx === 0 || id
 out.sort(function(a,b){return a.score-b.score;});return out;
 }
 export function identityFor(d,ctx){
-if(!d || Object.keys(d).length < 3){return{id:'new-leaf',name:'New Leaf',icon:'🌱',color:'#65A30D',blurb:'A fresh reflection — keep checking in.'};}
+if(!d || Object.keys(d).length < 3){return{id:'new-leaf',name:'New Leaf',icon:'🌱',color:'#4E9B6A',blob:'#C9EAD8',mood:'happy',blurb:'A fresh reflection — keep checking in.'};}
 for(let i=0;i<IDENTITIES.length;i++){const id=IDENTITIES[i];let ok=false;try{ok=id.test(d,ctx);}catch(e){ok=false;}if(ok){return{id:id.id,name:id.name,icon:id.icon,color:id.color,blurb:id.blurb};}}
-return{id:'steady-builder',name:'Steady Builder',icon:'🧱',color:'#57534E',blurb:'Building quietly, one day at a time.'};
+return{id:'steady-builder',name:'Steady Builder',icon:'🧱',color:'#8A7B8F',blob:'#DCCEFF',mood:'calm',blurb:'Building quietly, one day at a time.'};
 }
 export function weekDist(entries){
 const cut=new Date();cut.setDate(cut.getDate()-7);
