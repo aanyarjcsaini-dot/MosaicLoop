@@ -3,7 +3,7 @@ if(!product||!product.typicalResultWindowWeeks){return{known:false};}
 const minD=product.typicalResultWindowWeeks.min*7,maxD=product.typicalResultWindowWeeks.max*7;
 return{known:true,minW:product.typicalResultWindowWeeks.min,maxW:product.typicalResultWindowWeeks.max,
 source:product.typicalResultWindowWeeks.source,confirmed:confirmCount,elapsed:elapsedDays,
-left:Math.max(0,maxD-confirmed),done:elapsedDays>=maxD,
+left:Math.max(0,maxD-confirmCount),done:elapsedDays>=maxD,
 consistency:elapsedDays>0?Math.round(confirmCount/Math.max(1,elapsedDays)*100):0};
 }
 export function trialLine(product,confirmCount,elapsedDays){
