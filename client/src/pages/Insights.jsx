@@ -1,29 +1,60 @@
-import {useState} from 'react';import {Flame,Droplets} from 'lucide-react';import {dnaOf,identityFor,describeIdentity,patternBullets,weekDist,qualifyingWellness,streakDays,IDENTITIES} from '../lib/wellness.js';import {productUseDays} from '../lib/shelf.js';import Petals,{Ring} from '../components/Visuals.jsx';import IdentityPopup from '../components/IdentityPopup.jsx';
+import {useState} from 'react';import {qualifyingWellness} from '../lib/wellness.js';
 function readEntries(){try{return JSON.parse(localStorage.getItem('entries')||'[]');}catch(e){return[];}}
-const LBL={sleep:'Sleep',energy:'Energy',mood:'Mood',stress:'Stress',food:'Food',skin:'Skin'};
+function last7(list){const c=new Date();c.setDate(c.getDate()-7);return list.filter(function(e){return new Date(e.ts)>=c;});}
+function report(list){
+const r=last7(list);
+if(r.filter(qualifyingWellness).length<3){return{ready:false,text:'Not much to go on yet — complete a few more check-ins and your personal report will appear here.'};}
+const dims={sleep:0,energy:0,mood:0,stress:0,food:0,skin:0};const low={sleep:0,energy:0,mood:0};
+const keys=Object.keys(dims);
+for(let ji=0;ji<r.length;ji++){const p=r[ji].picks||{};for(let ki=0;ki<keys.length;ki++){const k=keys[ki];const v=p[k];const has=(v===0||v===1||v===2||v===3);if(!has){continue;}dims[k]++;if((k==='sleep'||k==='energy'||k==='mood')&&v>=2){low[k]++;}}}
+const topics=[];if(dims.sleep>=2){topics.push('sleep');}if(dims.stress>=2){topics.push('stress management');}if(dims.energy>=2){topics.push('energy');}if(dims.mood>=2){topics.push('mood');}
+const worst=Object.keys(low).sort(function(a,b){return low[b]-low[a];})[0];
+let tip='Try maintaining a consistent bedtime and taking a short break during the day.';
+if(worst==='sleep'){tip='Try a fixed bedtime and screens off 20 minutes before sleep.';}
+else if(worst==='energy'){tip='Try a short daylight walk and regular meals tomorrow.';}
+else if(worst==='mood'){tip='Try five minutes reflecting on your mood before bed.';}
+const t=topics.length?topics.join(' and '):'general wellbeing';
+return{ready:true,text:'You checked in '+r.length+' times this week, mostly about '+t+'. '+(low[worst]>=2?'Lower '+worst+' answers showed up more than once — rest and recovery may be worth prioritising. ':'Patterns look fairly steady. ')+tip};
+}
+const GOALS=[
+{id:'walk',t:'Take a 10-minute walk',why:'sleep,energy'},
+{id:'water',t:'Drink water at regular intervals',why:'energy'},
+{id:'break',t:'Take a short break between work or study',why:'stress,mood'},
+{id:'bedtime',t:'Follow a consistent bedtime routine',why:'sleep'},
+{id:'checkin',t:"Complete today's wellness check-in",why:'rhythm'},
+{id:'mood',t:'Spend five minutes reflecting on your mood',why:'mood'},
+{id:'product',t:'Confirm today’s product use',why:'routine'}];
+function pickGoals(list){
+const r=last7(list);
+const low={sleep:0,energy:0,mood:0,stress:0};
+r.forEach(function(e){const p=e.picks||{};['sleep','energy','mood','stress'].forEach(function(k){if((p[k]===0||p[k])&&p[k]>=2){low[k]++;}});});
+const today=new Date().toISOString().slice(0,10);
+const doneToday=list.some(function(e){return e.day===today;});
+let shelf=[];try{shelf=JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){shelf=[];}
+const score=function(g){
+if(g.id==='checkin'){return doneToday?-1:100;}
+if(g.id==='bedtime'){return 60+low.sleep*15;}
+if(g.id==='break'){return 55+low.stress*15;}
+if(g.id==='walk'){return 50+low.energy*12;}
+if(g.id==='mood'){return 45+low.mood*12;}
+if(g.id==='product'){return shelf.length?48:-1;}
+return 40;};
+return GOALS.map(function(g){return{g:g,s:score(g)};}).filter(function(x){return x.s>=0;}).sort(function(a,b){return b.s-a.s;}).slice(0,6).map(function(x){return x.g;});
+}
 export default function Insights(){
-const[entries]=useState(readEntries);const[pop,setPop]=useState(null);
-const sorted=[...entries].sort(function(a,b){return a.ts<b.ts?-1:1;});
-const live=sorted[sorted.length-1]||null;
-const wDays=[...new Set(entries.filter(qualifyingWellness).map(function(e){return e.day;}))].sort();
-let shelfDays=[];try{shelfDays=JSON.parse(localStorage.getItem('shelf2')||'[]').flatMap(function(it){return it.confirmations||[];});}catch(e){shelfDays=[];}
-const pDays=[...new Set(entries.filter(function(e){return e.productUse;}).map(function(e){return e.day;}).concat(shelfDays))].sort();
-const w=streakDays(wDays),p=streakDays(pDays);
-const fi=live?function(){const f=IDENTITIES.filter(function(x){return live.identity&&x.id===live.identity.id;})[0];return f||identityFor(live.dna||dnaOf(live.picks||{}),{streak:w.current});}():null;
-const an=fi?describeIdentity(fi.id,entries):null;
-const dist=weekDist(entries);
-const hist=[...entries].sort(function(a,b){return b.ts.localeCompare(a.ts);}).slice(0,14);
+const[list]=useState(readEntries);
+const[done,setDone]=useState(function(){try{return JSON.parse(localStorage.getItem('goals')||'{}');}catch(e){return{};}});
+const rep=report(list);const goals=pickGoals(list);
+const today=new Date().toISOString().slice(0,10);
+const td=done[today]||{};
+const toggle=function(id){const n=Object.assign({},done);n[today]=Object.assign({},td);if(n[today][id]){delete n[today][id];}else{n[today][id]=1;}setDone(n);localStorage.setItem('goals',JSON.stringify(n));};
+const ndone=goals.filter(function(g){return td[g.id];}).length;
 return<div style={{display:'grid',gap:12}}>
-<div><h1 className="pagehead">Wellness Insights</h1><p className="muted">Your patterns, explained. Self-reported — never medical advice.</p></div>
-{fi?<div className="card" style={{borderTop:'6px solid '+fi.color}}><h2><span style={{fontSize:30}}>{fi.icon}</span> <button style={{color:fi.color,background:'none',border:'none',fontSize:'1em',fontWeight:800,fontFamily:'Montserrat'}} onClick={function(){setPop({ident:fi,picks:live.picks});}}>{fi.name}</button></h2><Petals dna={live.dna||dnaOf(live.picks||{})}/><p>{an.line}</p><p><b>Tomorrow, try:</b> {an.tip}</p></div>
-:<div className="card"><p className="muted">No check-ins yet — visit Check-in to begin your story.</p></div>}
-<div className="grid2">
-<div className="card"><b><Flame size={18}/> Wellness streak</b><p style={{fontSize:24,margin:'4px 0'}}>{w.current} <span className="muted">best {w.best}</span></p><div style={{height:8,background:'#F3E8D2',borderRadius:99}}><div style={{width:Math.min(100,w.current/7*100)+'%',height:'100%',background:'#6F9676',borderRadius:99}}/></div><p className="muted">{w.current<7?(7-w.current)+' days to your 7-day glow!':'Blazing — protect it gently.'}</p></div>
-<div className="card"><b><Droplets size={18}/> Product-use streak</b><p style={{fontSize:24,margin:'4px 0'}}>{p.current} <span className="muted">best {p.best}</span></p><div style={{height:8,background:'#DDEBD9',borderRadius:99}}><div style={{width:Math.min(100,p.current/7*100)+'%',height:'100%',background:'#6F9676',borderRadius:99}}/></div><p className="muted">{p.current<7?(7-p.current)+' consistent days to go!':'Routine locked in.'}</p></div>
-</div>
-<div className="card"><h3 className="sec-title">Last 7 days — share of your best answers</h3>
-{dist.length?dist.map(function(d){return<div key={d.key} style={{display:'flex',alignItems:'center',gap:8,marginTop:6}}><span style={{width:70,fontSize:13}}>{LBL[d.key]||d.key}</span><div style={{flex:1,height:10,background:'#EFE9F5',borderRadius:99}}><div style={{width:d.pct+'%',height:'100%',background:'#6F9676',borderRadius:99}}/></div><span style={{fontSize:13,width:38}}>{d.pct}%</span></div>;}):<p className="muted">Check in a few days to grow this chart.</p>}</div>
-<div className="card"><h3 className="sec-title">History</h3>{hist.length?hist.map(function(e){return<div key={e.ts} className="muted" style={{borderTop:'1px solid #EFE9F5',padding:'6px 0'}}>{e.day} {new Date(e.ts).toLocaleTimeString()} • {(e.identity&&e.identity.name)||'—'}{e.productUse?' • ✓ used':''}</div>;}):<p className="muted">Nothing yet.</p>}</div>
-{pop&&<IdentityPopup ident={pop.ident} entries={entries} picks={pop.picks} onClose={function(){setPop(null);}}/>}
+<div><h1 className="pagehead">Wellness Insights</h1><p className="muted">Your week, explained. Analytical — never medical advice.</p></div>
+<div className="card" style={{background:'linear-gradient(135deg,#E6E0FF,#EFFBDB)'}}><h3 className="sec-title">Your 7-day report</h3><p>{rep.text}</p></div>
+<div className="card"><h3 className="sec-title">Today's Goals ({ndone}/{goals.length})</h3>
+<div style={{height:8,background:'#E4E2F5',borderRadius:99,margin:'6px 0'}}><div style={{width:(goals.length?ndone/goals.length*100:0)+'%',height:'100%',background:'#6C7CFF',borderRadius:99}}/></div>
+{goals.map(function(g){const on=!!td[g.id];return<button key={g.id} className="chip" style={{display:'block',width:'100%',marginTop:6,textAlign:'left',background:on?'#C6F36B':'#fff',borderColor:on?'#5FA832':'#E3DCFF'}} onClick={function(){toggle(g.id);}}>{on?'✓ ':'○ '}{g.t}</button>;})}
+<p className="muted">Completions are saved daily and shape tomorrow's goals.</p></div>
 </div>;
 }
