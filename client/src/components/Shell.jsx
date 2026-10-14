@@ -1,4 +1,4 @@
-import {useEffect,useState} from 'react';import {Home,ShoppingBag,ChartNoAxesColumnIncreasing,UsersRound,Images,Settings,Menu,X,CalendarDays,Compass,Camera,Star,MoreHorizontal} from 'lucide-react';import {useApp} from '../store.js';import Blob from './Blobs.jsx';import Profile from './Profile.jsx';
+import {useEffect,useState} from 'react';import {Home,ShoppingBag,ChartNoAxesColumnIncreasing,UsersRound,Images,Settings,Menu,X,CalendarDays,Compass,Camera,Star,MoreHorizontal} from 'lucide-react';import {useApp} from '../store.js';import {Sparkles} from 'lucide-react';import Profile from './Profile.jsx';
 const MAIN=[['home','Home',Home],['insights','Wellness Insights',ChartNoAxesColumnIncreasing],['calendar','Calendar',CalendarDays],['shelf','My Shelf',ShoppingBag],['album','Album',Images],['family','Family & Friends',UsersRound],['discover','Discover',Compass],['reviews','Honest Reviews',Star],['settings','Settings',Settings]];
 const PILL=[['home','Home',Home],['insights','Insights',ChartNoAxesColumnIncreasing],['calendar','Calendar',CalendarDays],['shelf','Shelf',ShoppingBag]];
 function Mark(){
@@ -33,7 +33,7 @@ return<div className="shell">
 <div className="top">{desktop&&<button className="menubtn" aria-label="Toggle navigation" aria-expanded={!sideCollapsed} onClick={toggle}><Menu size={20}/></button>}<b style={{fontFamily:'Montserrat',fontWeight:800}}>Mosaic Loop</b><span className="muted">wellness first</span><Profile/></div>
 <div className="content">{children}</div>
 </div>
-<button className="buddy" aria-label="AI Wellness Friend" onClick={function(){setBuddy(!buddy);}}><Blob c="#F8A8C8" m="happy" s={34}/></button>
+<button className="buddy" aria-label="AI Wellness Friend" onClick={function(){setBuddy(!buddy);}}><Sparkles size={26}/></button>
 <button className="camerafab" aria-label="Capture progress photo" onClick={camera}><Camera size={24}/></button>
 <nav className="pillnav" aria-label="Primary">
 {PILL.map(function(t){const k=t[0],l=t[1],Icon=t[2];const on=tab===k;

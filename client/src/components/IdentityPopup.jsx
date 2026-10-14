@@ -1,4 +1,4 @@
-import {weekDist,patternBullets,describeIdentity} from '../lib/wellness.js';import Blob from './Blobs.jsx';
+import {weekDist,patternBullets,describeIdentity} from '../lib/wellness.js';
 const LBL={sleep:'Sleep',energy:'Energy',mood:'Mood',stress:'Stress',food:'Food',skin:'Skin'};
 export default function IdentityPopup(props){
 const ident=props.ident,list=props.entries||[],now=props.picks||{},close=props.onClose;
@@ -8,7 +8,7 @@ const pats=patternBullets(list);
 const an=describeIdentity(ident.id,list);
 return<div><div className="scrim" onClick={close}/>
 <div className="sheet" role="dialog" aria-label={ident.name}>
-<div style={{display:'flex',gap:10,alignItems:'center'}}><Blob c={ident.blob||'#F8A8C8'} m={ident.mood||'happy'} s={44}/>
+<div style={{display:'flex',gap:10,alignItems:'center'}}><div style={{fontSize:40}}>{ident.icon}</div>
 <div><h3 style={{margin:0,color:ident.color}}>{ident.name}</h3><p className="muted" style={{margin:0}}>{ident.blurb}</p></div></div>
 {pats.length>0&&<div style={{marginTop:8}}><b>Patterns in your data</b>{pats.map(function(p,i){return<div key={i} className="muted">• {p}</div>;})}</div>}
 <div style={{marginTop:8,background:'#E6E0FF',borderRadius:14,padding:10}}><b>Tomorrow, try:</b> {an.tip}</div>

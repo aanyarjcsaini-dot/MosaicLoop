@@ -1,4 +1,4 @@
-import {useEffect,useRef,useState} from 'react';import {chatReply,chatFollow} from '../lib/chat.js';import Blob from './Blobs.jsx';
+import {useEffect,useRef,useState} from 'react';import {Sparkles} from 'lucide-react';import {chatReply,chatFollow} from '../lib/chat.js';
 import {useApp} from '../store.js';
 export default function Buddy(onClose){
 const close=onClose.onClose||onClose;
@@ -28,8 +28,8 @@ if(!('speechSynthesis' in window)){setLog(function(l){return [...l,{w:'ai',t:'Li
 setLive('speaking');const u=new SpeechSynthesisUtterance('I am listening. How are you feeling today?');
 u.onend=function(){setLive('idle');};window.speechSynthesis.speak(u);voiceNote();};
 return<div>
-{!entered?<div onClick={function(){setEntered(true);setTimeout(function(){if(input.current){input.current.focus();}},60);}} style={{textAlign:'center',padding:'12px 4px',cursor:'pointer'}}><span className="fairywave loop"><Blob c="#F8A8C8" m="happy" s={96}/></span><h3>Hey there! I'm happy you're here.</h3><p className="muted">Your little wellness corner is ready whenever you are.</p><p><b>Tap again to start our chat</b></p></div>
-:<><div style={{display:'flex',gap:8,alignItems:'center'}}><Blob c="#F8A8C8" m="happy" s={30}/><div><b>AI Wellness Friend</b></div></div>
+{!entered?<div onClick={function(){setEntered(true);setTimeout(function(){if(input.current){input.current.focus();}},60);}} style={{textAlign:'center',padding:'12px 4px',cursor:'pointer'}}><div style={{width:88,height:88,borderRadius:'50%',background:'#6C7CFF',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto'}}><Sparkles size={44}/></div><h3>Hey there! I'm happy you're here.</h3><p className="muted">Your little wellness corner is ready whenever you are.</p><p><b>Tap again to start our chat</b></p></div>
+:<><div style={{display:'flex',gap:8,alignItems:'center'}}><span style={{width:30,height:30,borderRadius:'50%',background:'#6C7CFF',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center'}}><Sparkles size={16}/></span><div><b>AI Wellness Friend</b></div></div>
 <div ref={box} style={{display:'grid',gap:8,maxHeight:260,overflow:'auto',marginTop:8}}>{log.map(function(m,i){return<div key={i} className="card" style={{background:m.w==='ai'?'#E6E0FF':'#FFF4E8'}}><b>{m.w==='ai'?'✦':'You'}:</b> {m.t}{m.options&&m.options.length>0&&<div style={{display:'flex',gap:6,marginTop:6,flexWrap:'wrap'}}>{m.options.map(function(c){return<button key={c} className="chip" onClick={function(){send(c);}}>{c}</button>;})}</div>}</div>;})}{busy&&<p className="muted">thinking…</p>}</div>
 <div style={{display:'flex',gap:8,marginTop:8}}><input ref={input} value={inp} onChange={function(e){setInp(e.target.value);}} onKeyDown={function(e){if(e.key==='Enter'){send();}}} placeholder="Say it your way…" aria-label="Message" style={{flex:1}}/><button className="btn" onClick={function(){send();}}>Send</button></div>
 <div style={{display:'flex',gap:8,marginTop:8,flexWrap:'wrap'}}><button className="chip" onClick={voiceNote}>🎙️ Voice note{live==='listening'?' (listening…)':''}</button><button className="chip" onClick={liveTalk}>🔊 Live talk{live==='speaking'?' (speaking…)':''}</button><button className="chip" onClick={close}>Close</button></div>

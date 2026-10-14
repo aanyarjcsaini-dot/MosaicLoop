@@ -1,4 +1,4 @@
-import {useState} from 'react';import Blob from '../components/Blobs.jsx';import {logs} from '../lib/shelf.js';import {IDENTITIES} from '../lib/wellness.js';import IdentityPopup from '../components/IdentityPopup.jsx';
+import {useState} from 'react';import {logs} from '../lib/shelf.js';import {IDENTITIES} from '../lib/wellness.js';import IdentityPopup from '../components/IdentityPopup.jsx';
 export default function Calendar(){
 const[cur,setCur]=useState(()=>{const d=new Date();d.setDate(1);return d;});
 const[day,setDay]=useState(null);const[pop,setPop]=useState(null);
@@ -15,7 +15,7 @@ return<div style={{display:'grid',gap:12}}>
 {Array.from({length:days}).map((_,di)=>{const d=di+1;const k=kFor(d);const shop=L[k]||[];const ids=(byDay[k]||[]).map(e=>e.identity?.name).filter(Boolean);const ev=[...shop,...ids];const today=k===new Date().toISOString().slice(0,10);
 return<button key={k} className="chip" style={{minHeight:64,borderColor:today?'#6F9676':'',background:ev.length?'#E9E1F5':'#FFFCF6'}} onClick={()=>setDay(k)}><b>{d}</b><br/><small>{ids.slice(0,2).join(' • ')||ev.slice(0,2).map(e=>e.includes('bought')?'🛍️':'💭').join(' ')}</small></button>;})}</div></div>
 {day&&<><div className="scrim" onClick={()=>setDay(null)}/><div className="sheet"><h3>{day}</h3>
-{((byDay[day])||[]).map(e=>{const fi=fullId(e);return<p key={e.ts}>• {new Date(e.ts).toLocaleTimeString()} — <button style={{color:fi.color,background:'none',border:'none',fontWeight:800}} onClick={()=>setPop({ident:fi,picks:e.picks})}><Blob c={fi.blob||'#F8A8C8'} m={fi.mood||'happy'} s={22}/> {fi.name}</button>{e.productUse?' • ✓ used':''}</p>;})}
+{((byDay[day])||[]).map(e=>{const fi=fullId(e);return<p key={e.ts}>• {new Date(e.ts).toLocaleTimeString()} — <button style={{color:fi.color,background:'none',border:'none',fontWeight:800}} onClick={()=>setPop({ident:fi,picks:e.picks})}>{fi.icon} {fi.name}</button>{e.productUse?' • ✓ used':''}</p>;})}
 {((L[day])||[]).map(e=><p key={e}>• {e}</p>)}
 <button className="btn" onClick={()=>setDay(null)}>Close</button></div></>}
 {pop&&<IdentityPopup ident={pop.ident} entries={entries} picks={pop.picks} onClose={function(){setPop(null);}}/>}
