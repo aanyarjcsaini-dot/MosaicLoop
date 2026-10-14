@@ -9,6 +9,9 @@ button{font-family:'Montserrat',sans-serif}
 .side.collapsed{width:76px}
 .brandmark{display:flex;align-items:center;gap:10px;padding:4px 8px 16px}
 .brandmark b{font-family:'Montserrat',sans-serif;font-weight:800;font-size:17px;white-space:nowrap}
+.minimark{display:none;width:36px;height:36px;border-radius:12px;background:#6C7CFF;color:#fff;font-weight:800;align-items:center;justify-content:center;font-size:20px}
+.side.collapsed .fullmark{display:none}
+.side.collapsed .minimark{display:flex}
 .side.collapsed .brandmark b{display:none}
 .navitem{display:flex;align-items:center;gap:12px;width:100%;border:none;background:none;text-align:left;font-size:14px;font-weight:600;color:var(--ink);padding:12px 14px;border-radius:14px;min-height:48px}
 .navitem svg{flex:none}
@@ -60,6 +63,11 @@ a{color:var(--peri)}
 .sec-title{font-family:'Montserrat',sans-serif;font-weight:600;font-size:20px;margin:0 0 4px}
 .pagehead{font-size:36px;margin:4px 0 2px}
 .moregrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(min-width:1024px){
+.homegrid{grid-template-columns:1fr 1fr}
+.homegrid>*:nth-child(1),.homegrid>*:nth-child(2){grid-column:1/-1}
+.content{max-width:1060px}
+}
 .calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:10px}
 .calgrid .chip{min-height:52px;padding:4px 2px;font-size:11px;min-width:0;border-radius:12px}
 .calgrid .wkday{text-align:center;font-size:11px;font-weight:700;opacity:.6}

@@ -35,7 +35,7 @@ function greetName(){try{const p=JSON.parse(localStorage.getItem('profile')||'nu
 function dayPart(){const h=new Date().getHours();return h<12?'Good morning':h<17?'Good afternoon':'Good evening';}
 function shelfCount(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]').length;}catch(e){return 0;}}
 const lastSaved=useMemo(function(){const s=[...entries].sort(function(a,b){return a.ts<b.ts?-1:1;});return s[s.length-1]||null;},[entries]);
-return<div style={{display:'grid',gap:12}}>
+return<div className="homegrid" style={{display:'grid',gap:12}}>
 <div><h1 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0',lineHeight:1.15}}>{dayPart()}{greetName()?', '+greetName():''},<br/>You're doing amazing!</h1><p className="muted">Small steps. Big changes.</p></div>
 <div className="card"><h2 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0'}}>Hey, how are you today?</h2>
 <p className="muted">6 quick taps. Your mirror, not a medical test.</p></div>
