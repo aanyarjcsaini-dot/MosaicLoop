@@ -4,7 +4,7 @@ const app=express();
 app.use(helmet());app.use(cors({origin:process.env.CLIENT_URL?.split(',')||'*'}));app.use(express.json());app.use(morgan('dev'));
 app.get('/health',(_,res)=>res.json({ok:true,service:'mosaic-api'}));
 app.use('/api/auth',require('./routes/auth'));app.use('/api/checkins',require('./routes/checkins'));
-app.use('/api/purchases',require('./routes/purchases'));app.use('/api/shelf',require('./routes/shelf'));app.use('/api/reviews',require('./routes/reviews'));
+app.use('/api/purchases',require('./routes/purchases'));app.use('/api/shelf',require('./routes/shelf'));app.use('/api/reviews',require('./routes/reviews'));app.use('/api/products',require('./routes/products'));
 app.use('/api/chat',require('./routes/chat'));app.use('/api/rewards',require('./routes/rewards'));
 const PORT=process.env.PORT||5000;
 mongoose.connect(process.env.MONGO_URI).then(()=>{app.listen(PORT,()=>console.log('API on '+PORT));}).catch(e=>{console.error('Mongo fail',e.message);process.exit(1);});

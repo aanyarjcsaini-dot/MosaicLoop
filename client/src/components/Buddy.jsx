@@ -7,6 +7,7 @@ const[log,setLog]=useState([{w:'ai',t:'Hi, I’m your AI Wellness Friend! What a
 const[inp,setInp]=useState('');const entered=aiSeen;const setEntered=setAiSeen;
 const box=useRef(null);const input=useRef(null);
 useEffect(function(){if(input.current){input.current.focus();}},[]);
+useEffect(function(){try{const c=JSON.parse(localStorage.getItem('ai-context')||'null');if(c&&c.concern){setInp('I am dealing with '+c.concern.split('-').join(' ')+' ('+c.skin+' skin). Where do I start?');localStorage.removeItem('ai-context');}}catch(e){}},[]);
 const[busy,setBusy]=useState(false);const[live,setLive]=useState('idle');const rec=useRef(null);const stage=useRef('feel');
 useEffect(function(){const el=box.current;if(el){el.scrollTop=el.scrollHeight;}},[log,busy]);
 const send=async function(text){const q=(typeof text==='string'?text:inp).trim();if(!q||busy){return;}setInp('');setLog(function(l){return [...l,{w:'you',t:q}];});setBusy(true);

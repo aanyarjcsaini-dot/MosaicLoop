@@ -1,4 +1,4 @@
-import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {Flame,Droplets} from 'lucide-react';import {Q,IDENTITIES,dnaOf,driversOf,identityFor,describeIdentity,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import {PRODUCTS} from '../data/products.js';import {confirmProduct,dayKey as shelfDay} from '../lib/shelf.js';import Petals,{Ring} from '../components/Visuals.jsx';import IdentityPopup from '../components/IdentityPopup.jsx';
+import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {Flame,Droplets} from 'lucide-react';import {Q,IDENTITIES,dnaOf,driversOf,identityFor,describeIdentity,concernFor,concernLine,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import {PRODUCTS} from '../data/products.js';import {confirmProduct,dayKey as shelfDay} from '../lib/shelf.js';import Petals,{Ring} from '../components/Visuals.jsx';import IdentityPopup from '../components/IdentityPopup.jsx';
 const API=import.meta.env.VITE_API_URL||'http://localhost:5000/api';
 function load(){try{return JSON.parse(localStorage.getItem('entries')||'null')||seedHist();}catch(e){return seedHist();}}
 import {useApp} from '../store.js';import {pickGoals} from './Insights.jsx';
@@ -15,7 +15,8 @@ export default function Home(){
 const entries0=load();const[entries,setEntries]=useState(entries0);const{setTab}=useApp();
 const[nb,setNb]=useState(nudge);
 const[step,setStep]=useState(0);const[cur,setCur]=useState({});
-const[stage,setStage]=useState('ask');const[usedPids,setUsedPids]=useState([]);
+const[stage,setStage]=useState('ask');const[usedPids,setUsedPids]=useState([]);const[concern,setConcern]=useState(null);const[concernPick,setConcernPick]=useState(null);
+const shelfItems=function(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){return[];}};
 const shelfPids=function(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){return[];}};
 const togglePid=function(pid){setUsedPids(function(s){return s.indexOf(pid)>=0?s.filter(function(x){return x!==pid;}):[...s,pid];});};
 const[msg,setMsg]=useState('');const fact=useMemo(dailyFact,[]);const[pop,setPop]=useState(null);
@@ -29,17 +30,19 @@ const pDays=[...new Set(entries.filter(function(e){return e.productUse;}).map(fu
 const w=streakDays(wDays),p=streakDays(pDays);
 const q=Q[step];
 const pick=function(i){const np={};Object.keys(cur).forEach(function(k){np[k]=cur[k];});np[q.k]=i;setCur(np);
-if(step<Q.length-1){setStep(step+1);}else{setUsedPids([]);setStage('product');}};
+if(step<Q.length-1){setStep(step+1);}else{const items=shelfItems().filter(function(x){return concernFor(x.pid);});
+if(items.length){const t=concernFor(items[0].pid);setConcern({sku:items[0].pid,tap:t});setConcernPick(null);setStage('concern');}else{setUsedPids([]);setStage('product');}}};
+const good7=function(){const l=concernLine(entries);return l?l.good:0;};
 const save=function(){
-const d=dnaOf(cur);const id=identityFor(d,{streak:w.current});
+const d=dnaOf(cur);const id=identityFor(d,{streak:w.current,goodConcern:good7()});
 const ts=new Date().toISOString();
-const entry={id:'e'+Date.now(),ts:ts,day:ts.slice(0,10),picks:cur,dna:d,identity:{id:id.id,name:id.name,icon:id.icon,color:id.color},productUse:usedPids.length>0,usedProducts:usedPids};
+const entry={id:'e'+Date.now(),ts:ts,day:ts.slice(0,10),picks:cur,dna:d,identity:{id:id.id,name:id.name,icon:id.icon,color:id.color},productUse:usedPids.length>0,usedProducts:usedPids,concernRating:concernPick?{sku:concern.sku,concern:concern.tap.concern,rating:concern.tap.opts[concernPick]}:null};
 setEntries(function(es){return [...es,entry];});
 usedPids.forEach(function(pid){confirmProduct(pid,ts.slice(0,10));});
-setCur({});setStep(0);setUsedPids([]);setStage('done');setMsg('Saved — DNA updated instantly');
+setCur({});setStep(0);setUsedPids([]);setConcern(null);setConcernPick(null);setStage('done');setMsg('Saved — DNA updated instantly');
 try{axios.post(API+'/checkins/entry',{household:'default',brandPref:localStorage.getItem('brandPref')||'Be Bodywise',entry:entry}).catch(function(){});}catch(e){}
 };
-const again=function(){setStage('ask');setStep(0);setMsg('');};
+const again=function(){setStage('ask');setStep(0);setMsg('');setConcern(null);setConcernPick(null);};
 const edit=function(e){setCur(e.picks||{});setStep(0);setStage('ask');setMsg('Editing '+e.day+' — answers loaded');window.scrollTo({top:0});};
 const today=entries.filter(function(e){return e.day===localDay();}).sort(function(a,b){return a.ts<b.ts?-1:1;});
 function greetName(){try{const p=JSON.parse(localStorage.getItem('profile')||'null');return p&&p.name?p.name.split(' ')[0]:null;}catch(e){return null;}}
@@ -54,6 +57,9 @@ return<div className="homegrid" style={{display:'grid',gap:12}}>
 {stage==='ask'&&<div className="card spans"><p className="muted">Question {step+1}/{Q.length}</p>
 <div style={{height:8,background:'#E4E2F5',borderRadius:99}}><div style={{width:((step+1)/Q.length*100)+'%',height:'100%',background:'#6C7CFF',borderRadius:99}}/></div>
 <h3>{q.t}</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{q.o.map(function(o,i){return<button key={o} className="chip" onClick={function(){pick(i);}}>{q.e[i]} {o}</button>;})}</div></div>}
+{stage==='concern'&&concern&&<div className="card spans"><p className="muted">One more — about your shelf</p>
+<h3>{concern.tap.q}</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{concern.tap.opts.map(function(o,i){return<button key={o} className="chip" onClick={function(){setConcernPick(i);setUsedPids([]);setStage('product');}}>{o}</button>;})}</div>
+<div style={{display:'flex',gap:8,marginTop:8}}><button className="chip" onClick={function(){setConcernPick(null);setUsedPids([]);setStage('product');}}>Skip</button></div></div>}
 <div className="card" style={{background:'linear-gradient(135deg,#FFE9DC,#FFF6EC)'}}><small className="muted">DID YOU KNOW? • {fact.cat}</small><p><b>{fact.title}</b></p><p className="muted">{fact.why}</p><p className="muted">Source: {fact.source}</p></div>
 {stage==='product'&&function(){const items=shelfPids();return<><div className="scrim"/><div className="sheet"><h3>Have you used your products today?</h3><p className="muted">Tap each one you used — tap again to undo. Feeds each product's own streak.</p>
 {items.length?items.map(function(it){const p=PRODUCTS.filter(function(x){return x.id===it.pid;})[0];const on=usedPids.indexOf(it.pid)>=0;
@@ -64,6 +70,7 @@ return<button key={it.id} className="chip" style={{display:'block',width:'100%',
 {stage==='done'&&lastSaved&&function(){const fi=fullId(lastSaved);const an=describeIdentity(fi.id,entries);return<div className="card" style={{borderTop:'6px solid '+fi.color}}><h3><span style={{fontSize:28}}>{fi.icon}</span> <button style={{color:fi.color,background:'none',border:'none',fontSize:'1.1em',fontWeight:700,fontFamily:'Montserrat'}} onClick={function(){setPop({ident:fi,picks:lastSaved.picks});}}>{fi.name} ⓘ</button></h3><Petals dna={lastSaved.dna}/>
 <p>{an.line}</p>
 <p><b>Tomorrow, try:</b> {an.tip}</p>
+{function(){const l=concernLine(entries);return l?(((l.total<4)?null:(<p className="muted">Your concern notes were steady or better on {l.good} of the last {l.total} days (your self-reported notes).</p>))):null;}()}
 <p className="muted">{msg} • Self-reported patterns, not medical advice.</p>
 <button className="btn" onClick={again}>Check in again</button></div>;}()}
 {stage==='ask'&&live&&function(){const fi=fullId(live);const an=describeIdentity(fi.id,entries);return<div className="card" style={{borderTop:'6px solid '+fi.color}}><h3><span style={{fontSize:28}}>{fi.icon}</span> <button style={{color:fi.color,background:'none',border:'none',fontSize:'1.1em',fontWeight:700,fontFamily:'Montserrat'}} onClick={function(){setPop({ident:fi,picks:live.picks});}}>Live Wellness DNA — {fi.name} ⓘ</button></h3><Petals dna={live.dna||dnaOf(live.picks)}/><p>{an.line}</p><p className="muted">Latest: {live.day} • updates the moment you save. Tap the name for details.</p></div>;}()}

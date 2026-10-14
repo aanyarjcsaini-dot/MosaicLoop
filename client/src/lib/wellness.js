@@ -13,7 +13,31 @@ export const IDENTITIES=[
 {id:'calm-cloud',name:'Calm Cloud',icon:'☁️',color:'#4A90C2',blob:'#C7E5FF',mood:'calm',test:function(d){return isHigh(d,'stress',75);},blurb:'Calm and relaxed. Protect this peace.'},
 {id:'sleepy-owl',name:'Sleepy Owl',icon:'🦉',color:'#7C5CD6',blob:'#DCCEFF',mood:'sleepy',test:function(d){return isLow(d,'sleep',50);},blurb:'Your energy seems low today. Take things gently and focus on habits that help you feel refreshed.'},
 {id:'recharging-star',name:'Recharging Star',icon:'⭐',color:'#E0607E',blob:'#FF7F91',mood:'sleepy',test:function(d){return isLow(d,'energy',35) && isHigh(d,'sleep',50);},blurb:'Feeling depleted despite rest — recovery mode is productive today.'},
-{id:'consistency-champ',name:'Consistency Champ',icon:'🏅',color:'#4E9B6A',blob:'#C9EAD8',mood:'starry',test:function(d,ctx){return ctx && ctx.streak >= 5 && isHigh(d,'sleep',55) && isHigh(d,'energy',55) && isHigh(d,'mood',55);},blurb:'Steady check-ins and steady signals. Quiet discipline.'}];
+{id:'consistency-champ',name:'Consistency Champ',icon:'🏅',color:'#4E9B6A',blob:'#C9EAD8',mood:'starry',test:function(d,ctx){return ctx && ctx.streak >= 5 && isHigh(d,'sleep',55) && isHigh(d,'energy',55) && isHigh(d,'mood',55);},blurb:'Steady check-ins and steady signals. Quiet discipline.'},
+{id:'steady-glow',name:'Steady Glow',icon:'🌟',color:'#B8860B',blob:'#FFE59A',mood:'happy',test:function(d,ctx){return ctx && ctx.goodConcern >= 5;},blurb:'Your concern notes have been steady and positive. Gentle consistency is working.'}];
+export const CONCERN_TAPS={
+'underarm':{concern:'underarm',q:'How did your underarms feel today?',opts:['Fresh','Okay','Odour noticed','Irritated']},
+'body-acne':{concern:'body-acne',q:'How was your skin today?',opts:['Calmer','Same','More breakouts','Irritated']},
+'hair-scalp':{concern:'hair-scalp',q:'How was your scalp today?',opts:['Calm','Itchy','Flaky','Oily']},
+'body':{concern:'body',q:'How did the concern area feel today?',opts:['Better','Same','Worse','Irritated']}};
+export function concernFor(pid){
+if(!pid){return null;}
+if(pid.indexOf('rollon')>=0){return CONCERN_TAPS['underarm'];}
+if(pid.indexOf('bodywash')>=0||pid.indexOf('shower')>=0){return CONCERN_TAPS['body-acne'];}
+if(pid.indexOf('dandruff')>=0||pid.indexOf('biotin')>=0||pid.indexOf('minox')>=0){return CONCERN_TAPS['hair-scalp'];}
+return CONCERN_TAPS['body'];
+}
+export function concernLine(entries){
+const r=entries.filter(function(e){return e.concernRating&&e.concernRating.rating;}).slice(-7);
+if(r.length<4){return null;}
+const good=r.filter(function(e){return e.concernRating.rating==='Fresh'||e.concernRating.rating==='Okay'||e.concernRating.rating==='Calmer'||e.concernRating.rating==='Same'||e.concernRating.rating==='Better'||e.concernRating.rating==='Calm';}).length;
+return{good:good,total:r.length};
+}
+export function concernStrip(entries,sku){
+const rows=entries.filter(function(e){return e.concernRating&&e.concernRating.sku===sku;});
+const last=(function(){const m={};rows.forEach(function(e){m[e.day]=e.concernRating.rating;});return m;})();
+return{days:Object.keys(last).sort(),map:last};
+}
 export function dnaOf(picks){const m={};for(let i=0;i<Q.length;i++){const q=Q[i];const idx=picks[q.k];if(idx === 0 || idx){m[q.k]=q.v[idx];}}return m;}
 export function driversOf(picks){
 const out=[];const LBL={sleep:'Sleep',energy:'Energy',mood:'Mood',stress:'Stress',food:'Food',skin:'Skin'};
