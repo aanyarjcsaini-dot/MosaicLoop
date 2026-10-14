@@ -43,6 +43,8 @@ const contrib=sh.members.map(function(n){const m=fam.members.filter(function(x){
 return{count:st.current,best:st.best,contrib:contrib};
 };
 return<div style={{display:'grid',gap:12}}>
+<div className="card" style={{background:'linear-gradient(135deg,#E6E0FF,#EFFBDB)'}}><h3>Leaderboard <span className="muted">• SAMPLE — illustrative only</span></h3><p className="muted">How a lively circle could look. Your real members appear below.</p>
+{[['A',12,'#6C7CFF'],['R',9,'#B9A3FF'],['S',6,'#FFB99B']].map(function(r,i){return<div key={i} style={{display:'flex',gap:10,alignItems:'center',borderTop:'1px solid #EBD9F5',padding:'8px 0'}}><b style={{width:24}}>{i+1}</b><div style={{width:36,height:36,borderRadius:'50%',background:r[2],color:'#fff',fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center'}}>{r[0]}</div><div style={{flex:1}}><b>Sample {r[0]}</b><br/><span className="muted">{r[1]}-day streak</span></div><div style={{height:8,width:90,background:'#E4E2F5',borderRadius:99}}><div style={{width:(r[1]/14*100)+'%',height:'100%',background:'#6C7CFF',borderRadius:99}}/></div></div>;})}</div>
 <div className="card" style={{background:'linear-gradient(135deg,#FFF5D9,#E9E1F5)'}}><h3>Family & Friends 💛</h3>
 <p><b>{sharedTotal} shared moments this stretch!</b> <span className="muted">(counted from real events)</span></p>
 {sharedTotal>=18&&<p>🎉 Milestone — 18 together! Keep each other gently going.</p>}
