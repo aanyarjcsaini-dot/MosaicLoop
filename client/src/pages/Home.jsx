@@ -47,11 +47,11 @@ function dayPart(){const h=new Date().getHours();return h<12?'Good morning':h<17
 function shelfCount(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]').length;}catch(e){return 0;}}
 const lastSaved=useMemo(function(){const s=[...entries].sort(function(a,b){return a.ts<b.ts?-1:1;});return s[s.length-1]||null;},[entries]);
 return<div className="homegrid" style={{display:'grid',gap:12}}>
-<div><h1 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0',lineHeight:1.15}}>{dayPart()}{greetName()?', '+greetName():''},<br/>You're doing amazing!</h1><p className="muted">Small steps. Big changes.</p></div>
+<div><h1 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0',lineHeight:1.15,fontSize:'clamp(28px,5vw,40px)'}}>{dayPart()}{greetName()?', '+greetName():''},<br/>You're doing amazing!</h1><p className="muted">Small steps. Big changes.</p></div>
 {nb&&<div className="card" style={{background:'linear-gradient(135deg,#FFE9DC,#E6E0FF)',display:'flex',gap:10,alignItems:'center'}}><div style={{flex:1}}><b>⏰ {nb.left} {nb.left===1?'goal':'goals'} left today</b><p className="muted" style={{margin:0}}>In-app reminder — push notifications need a notification service.</p></div><button className="btn" onClick={function(){setTab('insights');}}>View</button><button className="chip" onClick={function(){try{localStorage.setItem('goal-nudge',localDay());}catch(e){}setNb(null);}}>Later</button></div>}
-<div className="card"><h2 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0'}}>Hey, how are you today?</h2>
+<div className="card spans"><h2 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0'}}>Hey, how are you today?</h2>
 <p className="muted">6 quick taps. Your mirror, not a medical test.</p></div>
-{stage==='ask'&&<div className="card"><p className="muted">Question {step+1}/{Q.length}</p>
+{stage==='ask'&&<div className="card spans"><p className="muted">Question {step+1}/{Q.length}</p>
 <div style={{height:8,background:'#E4E2F5',borderRadius:99}}><div style={{width:((step+1)/Q.length*100)+'%',height:'100%',background:'#6C7CFF',borderRadius:99}}/></div>
 <h3>{q.t}</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{q.o.map(function(o,i){return<button key={o} className="chip" onClick={function(){pick(i);}}>{q.e[i]} {o}</button>;})}</div></div>}
 <div className="card" style={{background:'linear-gradient(135deg,#FFE9DC,#FFF6EC)'}}><small className="muted">DID YOU KNOW? • {fact.cat}</small><p><b>{fact.title}</b></p><p className="muted">{fact.why}</p><p className="muted">Source: {fact.source}</p></div>

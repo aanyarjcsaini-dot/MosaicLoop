@@ -63,11 +63,11 @@ input:focus,select,textarea:focus{outline:2px solid var(--peri);outline-offset:1
 button:focus-visible,a:focus-visible{outline:2px solid var(--peri);outline-offset:2px}
 a{color:var(--peri)}
 .sec-title{font-family:'Montserrat',sans-serif;font-weight:600;font-size:20px;margin:0 0 4px}
-.pagehead{font-size:36px;margin:4px 0 2px}
+.pagehead{font-size:clamp(26px,3.6vw,36px);margin:4px 0 2px}
 .moregrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(min-width:1024px){
 .homegrid{grid-template-columns:1fr 1fr}
-.homegrid>*:nth-child(1),.homegrid>*:nth-child(2){grid-column:1/-1}
+.homegrid>.spans{grid-column:1/-1}
 .content{max-width:1060px}
 }
 .calgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:10px}
