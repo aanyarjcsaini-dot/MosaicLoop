@@ -1,4 +1,5 @@
-import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {Flame,Droplets} from 'lucide-react';import {Q,IDENTITIES,dnaOf,driversOf,identityFor,describeIdentity,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import {PRODUCTS} from '../data/products.js';import {confirmProduct,dayKey as shelfDay} from '../lib/shelf.js';import Petals,{Ring} from '../components/Visuals.jsx';import IdentityPopup from '../components/IdentityPopup.jsx';import Blob from '../components/Blobs.jsx';
+import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {Flame,Droplets} from 'lucide-react';import {Q,IDENTITIES,dnaOf,driversOf,identityFor,describeIdentity,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import {PRODUCTS} from '../data/products.js';import {confirmProduct,dayKey as shelfDay} from '../lib/shelf.js';import Petals,{Ring} from '../components/Visuals.jsx';import IdentityPopup from '../components/IdentityPopup.jsx';
+const QBLOB={sleep:{c:'#DCCEFF',m:'sleepy'},energy:{c:'#F8A8C8',m:'happy'},mood:{c:'#FFE59A',m:'happy'},stress:{c:'#C7E5FF',m:'calm'},food:{c:'#C9EAD8',m:'happy'},skin:{c:'#FF7F91',m:'happy'}};import Blob from '../components/Blobs.jsx';
 const API=import.meta.env.VITE_API_URL||'http://localhost:5000/api';
 function load(){try{return JSON.parse(localStorage.getItem('entries')||'null')||seedHist();}catch(e){return seedHist();}}
 export default function Home(){
@@ -37,7 +38,7 @@ return<div style={{display:'grid',gap:12}}>
 <p className="muted">6 quick taps. Your mirror, not a medical test.</p></div>
 {stage==='ask'&&<div className="card"><p className="muted">Question {step+1}/{Q.length}</p>
 <div style={{height:8,background:'#EFE9F5',borderRadius:99}}><div style={{width:((step+1)/Q.length*100)+'%',height:'100%',background:'#6F9676',borderRadius:99}}/></div>
-<h3>{q.t}</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{q.o.map(function(o,i){return<button key={o} className="chip" onClick={function(){pick(i);}}>{q.e[i]} {o}</button>;})}</div></div>}
+<h3><Blob c={(QBLOB[q.k]||{}).c||'#F8A8C8'} m={(QBLOB[q.k]||{}).m||'happy'} s={34}/> {q.t}</h3><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>{q.o.map(function(o,i){return<button key={o} className="chip" onClick={function(){pick(i);}}>{q.e[i]} {o}</button>;})}</div></div>}
 <div className="card" style={{background:'linear-gradient(135deg,#E9E1F5,#FFF5D9)'}}><small className="muted">DID YOU KNOW? • {fact.cat}</small><p><b>{fact.title}</b></p><p className="muted">{fact.why}</p><p className="muted">Source: {fact.source}</p></div>
 {stage==='product'&&function(){const items=shelfPids();return<><div className="scrim"/><div className="sheet"><h3>Have you used your products today?</h3><p className="muted">Tap each one you used — tap again to undo. Feeds each product's own streak.</p>
 {items.length?items.map(function(it){const p=PRODUCTS.filter(function(x){return x.id===it.pid;})[0];const on=usedPids.indexOf(it.pid)>=0;

@@ -17,7 +17,7 @@ return<div style={{display:'grid',gap:12}}>
 {list.map(p=><div key={p.id} className="card"><b>{p.name}</b> <span className="muted">• {p.brand} • {p.category} • {p.verified?'VERIFIED':'DEV SAMPLE'}</span><p className="muted">{p.description} • {p.variant} • {p.price}</p>
 <div style={{display:'flex',gap:8}}><button className="chip" onClick={()=>setDetail(p)}>Details</button><a href={p.url} target="_blank" rel="noreferrer">Official page ↗</a></div></div>)}
 {detail&&<><div className="scrim" onClick={()=>setDetail(null)}/><div className="sheet"><h3>{detail.name}</h3><p className="muted">{detail.verified?'Verified record':'DEV SAMPLE record'}</p><p>{detail.description}</p><p className="muted">Variant: {detail.variant} • Price: {detail.price}</p><a href={detail.url} target="_blank" rel="noreferrer">Buy on official site ↗ (app never charges)</a>
-<div style={{marginTop:8,borderTop:'1px solid #ECE4D4',paddingTop:8}}><b>Honest review {have.has(detail.id)?'(verified — you own this)':'(own it to review)'}</b>
+<div style={{marginTop:8,borderTop:'1px solid #EBD9F5',paddingTop:8}}><b>Honest review {have.has(detail.id)?'(verified — you own this)':'(own it to review)'}</b>
 <div style={{display:'flex',gap:6,margin:'6px 0'}}><button className={'chip'+(liked?' sel':'')} onClick={()=>setLiked(true)}>I liked it</button><button className={'chip'+(!liked?' sel':'')} onClick={()=>setLiked(false)}>Could be better</button></div>
 <textarea value={txt} onChange={e=>setTxt(e.target.value)} placeholder="What stood out?" aria-label="Review text" style={{width:'100%'}}/>
 <button className="btn" disabled={!have.has(detail.id)||!txt.trim()} onClick={()=>{
