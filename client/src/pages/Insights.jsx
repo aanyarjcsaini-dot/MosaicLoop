@@ -1,4 +1,4 @@
-import {useState} from 'react';import {qualifyingWellness} from '../lib/wellness.js';
+import {useState} from 'react';import {qualifyingWellness} from '../lib/wellness.js';import {evaluateMedals} from '../lib/rewards.js';
 function readEntries(){try{return JSON.parse(localStorage.getItem('entries')||'[]');}catch(e){return[];}}
 function last7(list){const c=new Date();c.setDate(c.getDate()-7);return list.filter(function(e){return new Date(e.ts)>=c;});}
 function report(list){
@@ -23,11 +23,12 @@ const GOALS=[
 {id:'bedtime',t:'Follow a consistent bedtime routine',why:'sleep'},
 {id:'checkin',t:"Complete today's wellness check-in",why:'rhythm'},
 {id:'mood',t:'Spend five minutes reflecting on your mood',why:'mood'},
+{id:'skincare',t:'Gentle evening cleanse + moisturize',why:'skin'},
 {id:'product',t:'Confirm today’s product use',why:'routine'}];
 function pickGoals(list){
 const r=last7(list);
-const low={sleep:0,energy:0,mood:0,stress:0};
-r.forEach(function(e){const p=e.picks||{};['sleep','energy','mood','stress'].forEach(function(k){if((p[k]===0||p[k])&&p[k]>=2){low[k]++;}});});
+const low={sleep:0,energy:0,mood:0,stress:0,skin:0};
+r.forEach(function(e){const p=e.picks||{};['sleep','energy','mood','stress','skin'].forEach(function(k){if((p[k]===0||p[k])&&p[k]>=2){low[k]++;}});});
 const today=new Date().toISOString().slice(0,10);
 const doneToday=list.some(function(e){return e.day===today;});
 let shelf=[];try{shelf=JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){shelf=[];}
@@ -37,9 +38,14 @@ if(g.id==='bedtime'){return 60+low.sleep*15;}
 if(g.id==='break'){return 55+low.stress*15;}
 if(g.id==='walk'){return 50+low.energy*12;}
 if(g.id==='mood'){return 45+low.mood*12;}
+if(g.id==='skincare'){return 48+low.skin*15;}
 if(g.id==='product'){return shelf.length?48:-1;}
 return 40;};
-return GOALS.map(function(g){return{g:g,s:score(g)};}).filter(function(x){return x.s>=0;}).sort(function(a,b){return b.s-a.s;}).slice(0,6).map(function(x){return x.g;});
+const ranked=GOALS.map(function(g){return{g:g,s:score(g)};}).filter(function(x){return x.s>=0;}).sort(function(a,b){return b.s-a.s;});
+let picked=ranked.filter(function(x){return x.s>=45;}).slice(0,6).map(function(x){return x.g;});
+if(picked.length<2){
+['walk','water'].forEach(function(id){if(picked.length<3){const g=GOALS.filter(function(x){return x.id===id;})[0];if(g&&picked.indexOf(g)<0){picked.push(g);}}});}
+return picked;
 }
 export default function Insights(){
 const[list]=useState(readEntries);
@@ -47,11 +53,14 @@ const[done,setDone]=useState(function(){try{return JSON.parse(localStorage.getIt
 const rep=report(list);const goals=pickGoals(list);
 const today=new Date().toISOString().slice(0,10);
 const td=done[today]||{};
-const toggle=function(id){const n=Object.assign({},done);n[today]=Object.assign({},td);if(n[today][id]){delete n[today][id];}else{n[today][id]=1;}setDone(n);localStorage.setItem('goals',JSON.stringify(n));};
+const toggle=function(id){const n=Object.assign({},done);n[today]=Object.assign({},td);if(n[today][id]){delete n[today][id];}else{n[today][id]=1;}setDone(n);localStorage.setItem('goals',JSON.stringify(n));
+const count=Object.keys(n[today]).length;const fresh=evaluateMedals(count);if(fresh.length){setCheer(fresh);}};
+const[cheer,setCheer]=useState([]);
 const ndone=goals.filter(function(g){return td[g.id];}).length;
 return<div style={{display:'grid',gap:12}}>
 <div><h1 className="pagehead">Wellness Insights</h1><p className="muted">Your week, explained. Analytical — never medical advice.</p></div>
 <div className="card" style={{background:'linear-gradient(135deg,#E6E0FF,#EFFBDB)'}}><h3 className="sec-title">Your 7-day report</h3><p>{rep.text}</p></div>
+{cheer.length>0&&<div className="card pop" style={{background:'linear-gradient(135deg,#EFFBDB,#E6E0FF)',textAlign:'center'}}><h3>🏅 Medal earned!</h3>{cheer.map(function(m){return<p key={m.id}><b>{m.icon} {m.name}</b> — {m.desc}</p>;})}<button className="chip" onClick={function(){setCheer([]);}}>Nice!</button></div>}
 <div className="card"><h3 className="sec-title">Today's Goals ({ndone}/{goals.length})</h3>
 <div style={{height:8,background:'#E4E2F5',borderRadius:99,margin:'6px 0'}}><div style={{width:(goals.length?ndone/goals.length*100:0)+'%',height:'100%',background:'#6C7CFF',borderRadius:99}}/></div>
 {goals.map(function(g){const on=!!td[g.id];return<button key={g.id} className="chip" style={{display:'block',width:'100%',marginTop:6,textAlign:'left',background:on?'#C6F36B':'#fff',borderColor:on?'#5FA832':'#E3DCFF'}} onClick={function(){toggle(g.id);}}>{on?'✓ ':'○ '}{g.t}</button>;})}

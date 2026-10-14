@@ -54,6 +54,8 @@ button{font-family:'Montserrat',sans-serif}
 .scrim{position:fixed;inset:0;background:rgba(23,23,71,.4);z-index:45}
 .backdrop{position:fixed;inset:0;background:rgba(23,23,71,.4);z-index:47}
 .dots{letter-spacing:2px;font-weight:800}
+.pop{animation:pop .45s ease}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
 .muted{color:var(--ink);opacity:.65;font-size:13px}
 .cap{font-size:12px;opacity:.65}
 input,select,textarea{font-family:'Montserrat',sans-serif;font-size:14px;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;min-height:44px;max-width:100%}

@@ -18,3 +18,31 @@ try{fetch((import.meta.env.VITE_API_URL||'http://localhost:5000/api')+'/rewards/
 return{ok:true};
 }
 export function points(){return grants().reduce((a,g)=>a+(g.points||0),0);}
+export function medalGrants(){try{return JSON.parse(localStorage.getItem('medal-grants')||'[]');}catch(e){return[];}}
+import {MEDALS} from '../data/rewards.js';
+export function evaluateMedals(doneCount){
+const g=medalGrants();const earned=[];
+MEDALS.forEach(function(m){if(doneCount>=m.need&&!g.some(function(x){return x.ruleId===m.id;})){earned.push(m);}});
+if(!earned.length){return[];}
+const next=[...g,...earned.map(function(m){return{ruleId:m.id,ts:new Date().toISOString(),points:0};})];
+localStorage.setItem('medal-grants',JSON.stringify(next));
+earned.forEach(function(m){try{fetch((import.meta.env.VITE_API_URL||'http://localhost:5000/api')+'/rewards/grant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({household:'default',ruleId:m.id,points:0})}).catch(function(){});}catch(e){}});
+return earned;
+}
+export function goalStreak(done){
+let n=0;const d=new Date();const k=function(dt){return dt.toISOString().slice(0,10);};
+if(!done[k(d)]||!Object.keys(done[k(d)]||{}).length){d.setDate(d.getDate()-1);}
+let guard=0;
+while(guard<400){const key=k(d);if(done[key]&&Object.keys(done[key]).length){n++;d.setDate(d.getDate()-1);}else{break;}guard++;}
+return n;
+}
+export function checkinWeekCount(entries){
+const c=new Date();c.setDate(c.getDate()-7);const s={};
+entries.forEach(function(e){if(new Date(e.ts)>=c&&(e.picks&&Object.keys(e.picks).length>=4)){s[e.day]=1;}});
+return Object.keys(s).length;
+}export function challengeProgress(metric,vals){
+if(metric==='checkinWeek'){return vals.checkinWeek||0;}
+if(metric==='goalStreak'){return vals.goalStreak||0;}
+if(metric==='productStreak'){return vals.productStreak||0;}
+return 0;
+}
