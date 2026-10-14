@@ -1,8 +1,19 @@
 import {useEffect,useMemo,useState} from 'react';import axios from 'axios';import {Flame,Droplets} from 'lucide-react';import {Q,IDENTITIES,dnaOf,driversOf,identityFor,describeIdentity,localDay,qualifyingWellness,streakDays,seedHist} from '../lib/wellness.js';import {dailyFact} from '../lib/facts.js';import {PRODUCTS} from '../data/products.js';import {confirmProduct,dayKey as shelfDay} from '../lib/shelf.js';import Petals,{Ring} from '../components/Visuals.jsx';import IdentityPopup from '../components/IdentityPopup.jsx';
 const API=import.meta.env.VITE_API_URL||'http://localhost:5000/api';
 function load(){try{return JSON.parse(localStorage.getItem('entries')||'null')||seedHist();}catch(e){return seedHist();}}
+import {useApp} from '../store.js';import {pickGoals} from './Insights.jsx';
+function nudge(){try{
+if(localStorage.getItem('goal-nudge')===localDay()){return null;}
+const list=JSON.parse(localStorage.getItem('entries')||'[]');
+const goals=pickGoals(list);if(!goals.length){return null;}
+const today=localDay();let done={};try{done=JSON.parse(localStorage.getItem('goals')||'{}');}catch(e){done={};}
+const left=goals.filter(function(g){return !(done[today]&&done[today][g.id]);});
+if(!left.length){return null;}
+return{left:left.length};
+}catch(e){return null;}}
 export default function Home(){
-const entries0=load();const[entries,setEntries]=useState(entries0);
+const entries0=load();const[entries,setEntries]=useState(entries0);const{setTab}=useApp();
+const[nb,setNb]=useState(nudge);
 const[step,setStep]=useState(0);const[cur,setCur]=useState({});
 const[stage,setStage]=useState('ask');const[usedPids,setUsedPids]=useState([]);
 const shelfPids=function(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]');}catch(e){return[];}};
@@ -37,6 +48,7 @@ function shelfCount(){try{return JSON.parse(localStorage.getItem('shelf2')||'[]'
 const lastSaved=useMemo(function(){const s=[...entries].sort(function(a,b){return a.ts<b.ts?-1:1;});return s[s.length-1]||null;},[entries]);
 return<div className="homegrid" style={{display:'grid',gap:12}}>
 <div><h1 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0',lineHeight:1.15}}>{dayPart()}{greetName()?', '+greetName():''},<br/>You're doing amazing!</h1><p className="muted">Small steps. Big changes.</p></div>
+{nb&&<div className="card" style={{background:'linear-gradient(135deg,#FFE9DC,#E6E0FF)',display:'flex',gap:10,alignItems:'center'}}><div style={{flex:1}}><b>⏰ {nb.left} {nb.left===1?'goal':'goals'} left today</b><p className="muted" style={{margin:0}}>In-app reminder — push notifications need a notification service.</p></div><button className="btn" onClick={function(){setTab('insights');}}>View</button><button className="chip" onClick={function(){try{localStorage.setItem('goal-nudge',localDay());}catch(e){}setNb(null);}}>Later</button></div>}
 <div className="card"><h2 style={{fontFamily:'Montserrat',fontWeight:800,margin:'4px 0'}}>Hey, how are you today?</h2>
 <p className="muted">6 quick taps. Your mirror, not a medical test.</p></div>
 {stage==='ask'&&<div className="card"><p className="muted">Question {step+1}/{Q.length}</p>

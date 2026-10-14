@@ -25,7 +25,7 @@ const GOALS=[
 {id:'mood',t:'Spend five minutes reflecting on your mood',why:'mood'},
 {id:'skincare',t:'Gentle evening cleanse + moisturize',why:'skin'},
 {id:'product',t:'Confirm today’s product use',why:'routine'}];
-function pickGoals(list){
+export function pickGoals(list){
 const r=last7(list);
 const low={sleep:0,energy:0,mood:0,stress:0,skin:0};
 r.forEach(function(e){const p=e.picks||{};['sleep','energy','mood','stress','skin'].forEach(function(k){if((p[k]===0||p[k])&&p[k]>=2){low[k]++;}});});
