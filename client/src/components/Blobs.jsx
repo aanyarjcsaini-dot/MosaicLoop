@@ -8,11 +8,11 @@ const mouth=mood==='sleepy'
 ?<path d="M29 38 q3 2 6 0" stroke={dk} strokeWidth="2" fill="none" strokeLinecap="round"/>
 :<path d="M27 37 q5 5 10 0" stroke={dk} strokeWidth="2.2" fill="none" strokeLinecap="round"/>;
 return<svg width={s} height={s} viewBox="0 0 64 64" role="img" aria-label="Wellness buddy">
-<defs><radialGradient id="blobshade" cx="50%" cy="88%" r="75%"><stop offset="55%" stopColor="#171747" stopOpacity="0"/><stop offset="100%" stopColor="#171747" stopOpacity=".28"/></radialGradient></defs>
+<defs><radialGradient id="blobshade" cx="50%" cy="88%" r="75%"><stop offset="45%" stopColor="#171747" stopOpacity="0"/><stop offset="100%" stopColor="#171747" stopOpacity=".34"/></radialGradient><radialGradient id="bloblight" cx="35%" cy="20%" r="45%"><stop offset="0%" stopColor="#FFFFFF" stopOpacity=".8"/><stop offset="100%" stopColor="#FFFFFF" stopOpacity="0"/></radialGradient></defs>
 <ellipse cx="32" cy="56" rx="14" ry="4" fill={dk} opacity=".12"/>
 <path d="M32 6 Q48 6 50 24 Q52 42 40 50 Q32 55 24 50 Q12 42 14 24 Q16 6 32 6 Z" fill={c}/>
 <path d="M32 6 Q48 6 50 24 Q52 42 40 50 Q32 55 24 50 Q12 42 14 24 Q16 6 32 6 Z" fill="url(#blobshade)" opacity=".35"/>
-<ellipse cx="24" cy="17" rx="7" ry="4.5" fill="#FFFFFF" opacity=".55" transform="rotate(-18 24 17)"/>
+<path d="M32 6 Q48 6 50 24 Q52 42 40 50 Q32 55 24 50 Q12 42 14 24 Q16 6 32 6 Z" fill="url(#bloblight)" opacity=".5"/>
 {eyes}{mouth}
 <circle cx="19" cy="35" r="3" fill="#FF7F91" opacity=".55"/><circle cx="45" cy="35" r="3" fill="#FF7F91" opacity=".55"/>
 {mood==='starry'&&<g fill="#FFE59A"><path d="M50 10 l1 2.4 2.4 1 -2.4 1 -1 2.4 -1 -2.4 -2.4 -1 2.4 -1 z"/><circle cx="12" cy="12" r="1.6"/></g>}

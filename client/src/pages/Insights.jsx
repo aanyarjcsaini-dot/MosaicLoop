@@ -15,7 +15,7 @@ const dist=weekDist(entries);
 const hist=[...entries].sort(function(a,b){return b.ts.localeCompare(a.ts);}).slice(0,14);
 return<div style={{display:'grid',gap:12}}>
 <div><h1 className="pagehead">Wellness Insights</h1><p className="muted">Your patterns, explained. Self-reported — never medical advice.</p></div>
-{fi?<div className="card" style={{borderTop:'6px solid '+fi.color}}><h2><span style={{fontSize:30}}>{fi.icon}</span> <button style={{color:fi.color,background:'none',border:'none',fontSize:'1em',fontWeight:800,fontFamily:'Sora'}} onClick={function(){setPop({ident:fi,picks:live.picks});}}>{fi.name}</button></h2><Petals dna={live.dna||dnaOf(live.picks||{})}/><p>{an.line}</p><p><b>Tomorrow, try:</b> {an.tip}</p></div>
+{fi?<div className="card" style={{borderTop:'6px solid '+fi.color}}><h2><span style={{fontSize:30}}>{fi.icon}</span> <button style={{color:fi.color,background:'none',border:'none',fontSize:'1em',fontWeight:800,fontFamily:'Montserrat'}} onClick={function(){setPop({ident:fi,picks:live.picks});}}>{fi.name}</button></h2><Petals dna={live.dna||dnaOf(live.picks||{})}/><p>{an.line}</p><p><b>Tomorrow, try:</b> {an.tip}</p></div>
 :<div className="card"><p className="muted">No check-ins yet — visit Check-in to begin your story.</p></div>}
 <div className="grid2">
 <div className="card"><b><Flame size={18}/> Wellness streak</b><p style={{fontSize:24,margin:'4px 0'}}>{w.current} <span className="muted">best {w.best}</span></p><div style={{height:8,background:'#F3E8D2',borderRadius:99}}><div style={{width:Math.min(100,w.current/7*100)+'%',height:'100%',background:'#6F9676',borderRadius:99}}/></div><p className="muted">{w.current<7?(7-w.current)+' days to your 7-day glow!':'Blazing — protect it gently.'}</p></div>
