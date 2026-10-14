@@ -1,4 +1,4 @@
-import {useState} from 'react';import {ShoppingBag,Bell,Check} from 'lucide-react';import {PRODUCTS} from '../data/products.js';import {shelf,saveShelf,estimate,dayKey,logDay,confirmProduct,dueForPrompt,usageDays} from '../lib/shelf.js';import {streakDays} from '../lib/wellness.js';import {Ring} from '../components/Visuals.jsx';import Feedback from '../components/Feedback.jsx';
+import {useState} from 'react';import {ShoppingBag,Bell,Check} from 'lucide-react';import {PRODUCTS} from '../data/products.js';import {shelf,saveShelf,estimate,dayKey,logDay,confirmProduct,dueForPrompt,needsRestock,usageDays} from '../lib/shelf.js';import {streakDays} from '../lib/wellness.js';import {Ring} from '../components/Visuals.jsx';import Feedback from '../components/Feedback.jsx';
 export default function Shelf(){
 const[s,setS]=useState(shelf());const[ask,setAsk]=useState(null);const[fbFor,setFbFor]=useState(null);const[orderRef,setOrderRef]=useState('');
 const today=dayKey();
@@ -23,13 +23,14 @@ return<div key={it.id} className="card"><div style={{display:'flex',gap:12,align
 <div style={{display:'flex',gap:8,marginTop:6,flexWrap:'wrap'}}><button className="chip" onClick={function(){usedToday(i);}}>Used today ✓</button><button className="chip" onClick={function(){mute(i);}}>{it.muted?'Unmute reminders':'Mute reminders'}</button></div></div>
 <div style={{marginLeft:'auto'}}><Ring pct={pct} label={e.remaining+'d'}/></div></div>
 {show&&<div className="card" style={{marginTop:8,background:'#FFE9DC'}}><b>🔔 About {e.remaining} days left. Ready to restock?</b><div style={{display:'flex',gap:8,marginTop:8,flexWrap:'wrap'}}><button className="btn" onClick={function(){const n=[...s];n[i].lastPrompt=today;upd(n);setFbFor({i:i,mode:'restock'});}}>Purchase Now</button><button className="chip" onClick={snooze}>Remind me later</button><button className="chip" onClick={function(){setFbFor({i:i,mode:'pass'});}}>Pass This Time</button></div></div>}
+{!show&&it.lastPrompt&&<p className="muted" style={{margin:'6px 0 0'}}>Restock started — finish buying on the official site, then link your order below. Nothing is marked purchased yet.</p>}
 {fbFor&&fbFor.i===i&&<div style={{marginTop:8}}><Feedback mode={fbFor.mode} pid={it.pid} onDone={function(fb){const mode=fbFor.mode;setFbFor(null);
 if(mode==='restock'){openOfficial(i);}else{logDay(today,'passed: '+p.name+(fb&&fb.reasons.length?' ('+fb.reasons.join(', ')+')':'')+' — inventory preserved');}setAsk('done'+i);}}/></div>}
 {ask==='done'+i&&<div className="card" style={{marginTop:8}}><p className="muted">Restock click is not a purchase. Buy on the official page, then link your order:</p><div style={{display:'flex',gap:8}}><input value={orderRef} onChange={function(e){setOrderRef(e.target.value);}} placeholder="Order ref (e.g. BW123)" aria-label="Order reference"/><button className="btn" onClick={function(){linkOrder(i);}}>Link order</button></div><a href={p.url} target="_blank" rel="noreferrer">Open official product page ↗</a></div>}
 </div>;};
 const usedIdx=[],restIdx=[];
 s.forEach(function(it,i){const p=PRODUCTS.find(function(x){return x.id===it.pid;});if(!p){return;}const e=estimate(it,p,today);
-if(e.state==='depleted'||(!it.muted&&dueForPrompt(it,p,today))){restIdx.push(i);}else{usedIdx.push(i);}});
+if(needsRestock(it,p,today)){restIdx.push(i);}else{usedIdx.push(i);}});
 return<div style={{display:'grid',gap:12}}>
 <div className="card"><h3><ShoppingBag size={18}/> Used — currently tracking</h3><p className="muted">Check-in “Yes” and Used-today taps land here automatically.</p></div>
 {usedIdx.length?usedIdx.map(function(i){return card(s[i],i);}):<div className="card"><p className="muted">Nothing here — add your first product below.</p></div>}
