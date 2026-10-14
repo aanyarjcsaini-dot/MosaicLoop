@@ -42,7 +42,7 @@ return<div style={{display:'grid',gap:12}}>
 {rem&&next()!=='This week'&&next()<=dayKey()&&<p style={{marginTop:8}}>📸 Weekly photo due — tap 📷 to log it. (In-app reminder; push needs notification setup.)</p>}</div>
 <div className="card"><b>Milestones</b>{ms.length?ms.map(function(m){return<div key={m.id}>{m.done?'🏅':'○'} {m.label}{m.prog?' • '+m.prog:''}</div>;}):<p className="muted">No entries yet.</p>}<p className="muted">Weeks: {ins.weeks} • Photos: {ins.photos} • Since first: {ins.elapsed}d • Latest: {ins.latest||'—'} • Comparable pairs: {ins.pairs}</p><p className="muted">Factual activity only — photos alone never prove improvement (lighting and angles vary).</p></div>
 {[['m1','1-month',30],['m2','2-month',60]].map(function(m){const a=autoMile(m[2],m[1]);if(!a){return null;}
-return<div key={m[0]} className="card" style={{background:'linear-gradient(135deg,#FFE3EF,#DCCEFF)'}}><b>🏅 {m[1]} milestone — {catLabel(a.b.cat)}</b><p className="muted">First: {a.a.day} → Latest: {a.b.day} • originals, dated</p>
+return<div key={m[0]} className="card" style={{background:'linear-gradient(135deg,#E6E0FF,#EFFBDB)'}}><b>🏅 {m[1]} milestone — {catLabel(a.b.cat)}</b><p className="muted">First: {a.a.day} → Latest: {a.b.day} • originals, dated</p>
 <div style={{display:'flex',gap:8}}><img src={a.a.photos[0]} alt="first" style={{width:'48%',borderRadius:12}}/><img src={a.b.photos[0]} alt="latest" style={{width:'48%',borderRadius:12}}/></div>
 <button className="chip" style={{marginTop:8}} onClick={function(){setCmp([a.a.id+':0',a.b.id+':0']);window.scrollTo({top:0});}}>Open slider compare</button></div>;})}
 {cmpPhotos.length===2&&<div className="card"><b>Before ↔ After • {catLabel(cmpPhotos[0].e.cat)} • {cmpPhotos[0].e.day} vs {cmpPhotos[1].e.day}</b>

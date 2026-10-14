@@ -4,7 +4,7 @@ const keys=Object.keys(dna);const N=keys.length;const R=70;const cx=90;const cy=
 const pts=keys.map((k,i)=>{const a=(i/N)*Math.PI*2-Math.PI/2;const r=(dna[k]/100)*R;return[cx+r*Math.cos(a),cy+r*Math.sin(a),k];});
 const poly=pts.map(p=>p.slice(0,2).join(',')).join(' ');
 return<svg viewBox="0 0 180 180" width="100%" role="img" aria-label="Wellness DNA petals">
-<defs><radialGradient id="g" cx="50%" cy="40%"><stop offset="0%" stopColor="#FFE3EF"/><stop offset="100%" stopColor="#DCCEFF"/></radialGradient></defs>
+<defs><radialGradient id="g" cx="50%" cy="40%"><stop offset="0%" stopColor="#E4EFFF"/><stop offset="100%" stopColor="#E6E0FF"/></radialGradient></defs>
 <circle cx={cx} cy={cy} r={R} fill="url(#g)" opacity=".8"/>
 {[25,50,75].map(r=><circle key={r} cx={cx} cy={cy} r={R*r/100} fill="none" stroke="#554B60" opacity=".15"/>)}
 <polygon points={poly} fill="#6F9676" opacity=".8" style={{transition:'all .4s'}}/>

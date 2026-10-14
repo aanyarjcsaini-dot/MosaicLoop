@@ -10,7 +10,7 @@ const byDay={};entries.forEach(e=>{byDay[e.day]=byDay[e.day]||[];byDay[e.day].pu
 const kFor=d=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 return<div style={{display:'grid',gap:12}}>
 <div className="card"><div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}><button onClick={()=>setCur(new Date(y,m-1,1))}>‹</button><b>{cur.toLocaleString('default',{month:'long',year:'numeric'})}</b><button onClick={()=>setCur(new Date(y,m+1,1))}>›</button></div>
-<div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:6,marginTop:10}}>{['S','M','T','W','T','F','S'].map(d=><div key={d} className="muted" style={{textAlign:'center'}}>{d}</div>)}
+<div className="calgrid">{['S','M','T','W','T','F','S'].map(d=><div key={d} className="wkday">{d}</div>)}
 {Array.from({length:first}).map((_,i)=><div key={'e'+i}/>)}
 {Array.from({length:days}).map((_,di)=>{const d=di+1;const k=kFor(d);const shop=L[k]||[];const ids=(byDay[k]||[]).map(e=>e.identity?.name).filter(Boolean);const ev=[...shop,...ids];const today=k===new Date().toISOString().slice(0,10);
 return<button key={k} className="chip" style={{minHeight:64,borderColor:today?'#6F9676':'',background:ev.length?'#E9E1F5':'#FFFCF6'}} onClick={()=>setDay(k)}><b>{d}</b><br/><small>{ids.slice(0,2).join(' • ')||ev.slice(0,2).map(e=>e.includes('bought')?'🛍️':'💭').join(' ')}</small></button>;})}</div></div>
