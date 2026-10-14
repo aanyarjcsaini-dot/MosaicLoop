@@ -18,7 +18,8 @@ const card=function(it,i){
 const p=PRODUCTS.find(function(x){return x.id===it.pid;});if(!p){return null;}const e=estimate(it,p,today);
 if(e.state==='needs-dates'){return<div key={it.id} className="card"><b>Missing start date</b></div>;}
 const pct=Math.max(0,e.remaining/e.expected);const show=!it.muted&&needsRestock(it,p,today);
-return<div key={it.id} className="card"><div style={{display:'flex',gap:12,alignItems:'center'}}><div style={{fontSize:34}}>{p.img}</div>
+const low=needsRestock(it,p,today);
+return<div key={it.id} className="card" style={low?{background:'linear-gradient(135deg,#FFE9DC,#FFF6EC)',border:'2px solid #FFB99B'}:null}><div style={{display:'flex',gap:12,alignItems:'center'}}><div style={{fontSize:34}}>{p.img}</div>
 <div><b>{it.muted?'🔕 ':''}{p.name}</b><br/><span className="muted">{p.brand} • start {it.startDate} • ~{e.remaining}d left • ends {e.finish}{e.state==='depleted'?' • may be depleted — confirm?':''}</span><br/><span className="muted">Estimated day {Math.min(e.expected,e.elapsed+1)}/{e.expected} • 🔥 {streakDays(usageDays(it.pid)).current}d streak • history: {(usageDays(it.pid).slice(-4).join(', ')||'none yet')}</span>
 <div style={{display:'flex',gap:8,marginTop:6,flexWrap:'wrap'}}><button className="chip" onClick={function(){usedToday(i);}}>Used today ✓</button><button className="chip" onClick={function(){mute(i);}}>{it.muted?'Unmute reminders':'Mute reminders'}</button></div></div>
 <div style={{marginLeft:'auto'}}><Ring pct={pct} label={e.remaining+'d'}/></div></div>

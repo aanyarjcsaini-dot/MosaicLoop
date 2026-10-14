@@ -54,7 +54,18 @@ return{options:[],text:bits.length?('From your log ('+c.entries.day+'): '+bits.j
 const opts=CAUSES[s]||CAUSES.general;
 return{options:opts,text:'What do you think could be causing it? Pick what fits — or just tell me more.'};
 }
+const KNOWLEDGE={
+'Poor sleep':'What research consistently shows: a fixed wake time anchors sleep better than a fixed bedtime, morning daylight resets the body clock, and caffeine after midday plus late screens delay sleep onset. Which of these fits your week?',
+'Stress or overthinking':'What helps most people: a 5-minute wind-down before bed, writing tomorrow’s list out of your head, and daylight movement. Avoidance (doomscrolling) usually feeds it. What is weighing most — work, family, or sleep itself?',
+'Late screen time':'Blue-enriched light in the last hour suppresses melatonin and pushes sleep later. A practical fix researchers suggest: dim screens and switch to audio or paper 30–60 minutes before bed. What time do you usually put the phone away?',
+'Food or caffeine timing':'Heavy late meals and afternoon caffeine fragment sleep, and skipped meals reliably crash next-day energy. Regular meal times plus a caffeine cutoff around noon is the standard advice. How regular are your meals?',
+'Sleep debt':'Sleep debt repays slowly — one early night rarely fixes a week. The evidence-backed approach: shift bedtime earlier by 15 minutes every few nights. Want me to pull your 7-day sleep pattern from check-ins?',
+'A new product':'New actives need 4–6 weeks for skin and about 3 months for hair routines; irritation in week one is a stop signal, not a phase. Which product, and how long have you used it? I can open its Honest Check.',
+'Skipped meals':'Skipped meals reliably produce afternoon crashes and cravings. Anchoring two consistent meals matters more than any superfood. Which meals slip most often?',
+'Work or exams':'Time pressure raises evening cortisol, which delays sleep and tightens the next day. Short breaks between sessions protect both focus and rest. What does your day look like?',
+'Stress load':'Cumulative load shows up as broken sleep first. A short daily decompression ritual beats one big weekend reset. What has been heaviest lately?'};
 export async function chatFollow(choice){
+if(KNOWLEDGE[choice]){return{options:['Days','Weeks','Months','Not sure'],text:KNOWLEDGE[choice]};}
 const q=(FOLLOW[choice]||'How long has this lasted — days, weeks, or longer?')+' Your logs ('+ctx().counts.checkins+' check-ins) stay in view as we talk.';
 return{options:['Days','Weeks','Months','Not sure'],text:q};
 }

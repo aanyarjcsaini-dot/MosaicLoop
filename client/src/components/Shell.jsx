@@ -27,7 +27,7 @@ return<div className="shell">
 </aside>}
 {desktop&&sideOpen&&<div className="backdrop" onClick={function(){setSideOpen(false);}}/>}
 <div className={'main'+(sideCollapsed&&desktop?' wide':'')}>
-<div className="top">{desktop&&<button className="menubtn" aria-label="Toggle navigation" aria-expanded={!sideCollapsed} onClick={toggle}><Menu size={20}/></button>}<Logo s={16} row={true}/><span className="muted">wellness first</span><Profile/></div>
+<div className="top">{desktop&&<button className="menubtn" aria-label="Toggle navigation" aria-expanded={!sideCollapsed} onClick={toggle}><Menu size={20}/></button>}<Logo s={24} row={true}/><span className="muted">wellness first</span><Profile/></div>
 <div className="content">{children}</div>
 </div>
 <button className="buddy" aria-label="AI Wellness Friend" onClick={function(){setBuddy(!buddy);}}><Sparkles size={26}/></button>
