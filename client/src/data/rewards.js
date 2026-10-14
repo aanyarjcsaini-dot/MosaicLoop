@@ -17,5 +17,5 @@ export const CHALLENGES=[
 // Coupons are SAMPLES supplied by no live integration — never presented as redeemable.
 export const COUPONS=[
 {id:'cpn-sleep',brand:'Be Bodywise',title:'Sleep Trial Pack',code:'SAMPLE-SLP-7',status:'sample',challenge:'goal-3',detail:'Free 7-night trial pack.',expiry:'No expiry (sample)'},
-{id:'cpn-mm10',brand:'Man Matters',title:'10% Welcome Voucher',code:'SAMPLE-MM-10',status:'sample',challenge:'checkin-3',detail:'10% off one order.',expiry:'No expiry (sample)'},
-{id:'cpn-lj',brand:'Little Joys',title:'Kids DHA Sampler',code:'SAMPLE-LJ-DHA',status:'sample',challenge:'routine-7',detail:'Free kids sampler.',expiry:'No expiry (sample)'}];
+{id:'cpn-bw10',brand:'Be Bodywise',title:'10% Welcome Voucher',code:'SAMPLE-BW-10',status:'sample',challenge:'checkin-3',detail:'10% off one body-care order.',expiry:'No expiry (sample)'},
+{id:'cpn-bwmini',brand:'Be Bodywise',title:'Body Care Mini Kit',code:'SAMPLE-BW-MINI',status:'sample',challenge:'routine-7',detail:'Free mini kit with next routine milestone.',expiry:'No expiry (sample)'}];

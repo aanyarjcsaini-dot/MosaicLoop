@@ -3,7 +3,11 @@ const KINDS=[{k:'Mom',icon:'👩‍🦰'},{k:'Dad',icon:'👨'},{k:'Sibling',ico
 const GOALS=[{id:'walk',label:'Walk regularly',icon:'🚶'},{id:'yoga',label:'Yoga & stretching',icon:'🧘'},{id:'meditate',label:'Meditation',icon:'🌙'},{id:'product',label:'Consistent product use',icon:'💧'},{id:'habits',label:'Daily wellness habits',icon:'🌿'}];
 function lastDays(n){const out=[];for(let i=0;i<n;i++){const d=new Date();d.setDate(d.getDate()-i);out.push(d.toISOString().slice(0,10));}return out;}
 function load(){let f=null;try{f=JSON.parse(localStorage.getItem('fam2')||'null');}catch(e){f=null;}
-if(!f){f={members:[{name:'Mom',kind:'Mom',avatar:'👩‍🦰',streak:4,badges:['7-Day Rhythm'],share:{streaks:true,goals:true},goals:['walk','habits'],done:{},days:lastDays(4)}],invite:null,shared:[]};}
+if(!f){f={members:[
+{name:'Mom',kind:'Mom',avatar:'👩‍🦰',streak:6,badges:['7-Day Rhythm'],share:{streaks:true,goals:true},goals:['walk','habits'],done:{},days:lastDays(6)},
+{name:'Dad',kind:'Dad',avatar:'👨',streak:4,badges:[],share:{streaks:true,goals:true},goals:['walk'],done:{},days:lastDays(4)},
+{name:'Friend 1',kind:'Friend',avatar:'🧑‍🎤',streak:2,badges:[],share:{streaks:true,goals:true},goals:['habits'],done:{},days:lastDays(2)}],invite:null,shared:[]};}
+if(f.members.length===1&&f.members[0].name==='Mom'&&!f.members[0].via){f.members.push({name:'Dad',kind:'Dad',avatar:'👨',streak:4,badges:[],share:{streaks:true,goals:true},goals:['walk'],done:{},days:lastDays(4)},{name:'Friend 1',kind:'Friend',avatar:'🧑‍🎤',streak:2,badges:[],share:{streaks:true,goals:true},goals:['habits'],done:{},days:lastDays(2)});try{localStorage.setItem('fam2',JSON.stringify(f));}catch(e){}}
 f.members.forEach(function(m){if(!m.days){m.days=lastDays(m.streak||0);}});f.shared=f.shared||[];
 return f;}
 function myDays(type){
@@ -43,8 +47,13 @@ const contrib=sh.members.map(function(n){const m=fam.members.filter(function(x){
 return{count:st.current,best:st.best,contrib:contrib};
 };
 return<div style={{display:'grid',gap:12}}>
-<div className="card" style={{background:'linear-gradient(135deg,#E6E0FF,#EFFBDB)'}}><h3>Leaderboard <span className="muted">• SAMPLE — illustrative only</span></h3><p className="muted">How a lively circle could look. Your real members appear below.</p>
-{[['A',12,'#6C7CFF'],['R',9,'#B9A3FF'],['S',6,'#FFB99B']].map(function(r,i){return<div key={i} style={{display:'flex',gap:10,alignItems:'center',borderTop:'1px solid #EBD9F5',padding:'8px 0'}}><b style={{width:24}}>{i+1}</b><div style={{width:36,height:36,borderRadius:'50%',background:r[2],color:'#fff',fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center'}}>{r[0]}</div><div style={{flex:1}}><b>Sample {r[0]}</b><br/><span className="muted">{r[1]}-day streak</span></div><div style={{height:8,width:90,background:'#E4E2F5',borderRadius:99}}><div style={{width:(r[1]/14*100)+'%',height:'100%',background:'#6C7CFF',borderRadius:99}}/></div></div>;})}</div>
+<div className="card" style={{background:'linear-gradient(135deg,#E6E0FF,#EFFBDB)'}}><h3>Leaderboard</h3><p className="muted">Your circle, ranked live. Demo members included.</p>
+{function(){let mine=0;try{const es=JSON.parse(localStorage.getItem('entries')||'[]');const days={};es.forEach(function(e){if(e.picks&&Object.keys(e.picks).length>=4){days[e.day]=1;}});mine=streakDays(Object.keys(days).sort()).current;}catch(e){mine=0;}
+const rows=fam.members.map(function(m){return{name:m.name,av:m.avatar,streak:streakDays(m.days||[]).current,you:false};});
+rows.push({name:'You',av:null,streak:mine,you:true});
+rows.sort(function(a,b){return b.streak-a.streak;});
+const cols=['#6C7CFF','#B9A3FF','#FFB99B'];
+return rows.map(function(r,i){return<div key={r.name+i} style={{display:'flex',gap:10,alignItems:'center',borderTop:'1px solid #EBD9F5',padding:'8px 0'}}><b style={{width:24}}>{i+1}</b>{r.you?<div style={{width:36,height:36,borderRadius:'50%',background:'#171747',color:'#fff',fontWeight:800,display:'flex',alignItems:'center',justifyContent:'center'}}>Y</div>:<div style={{fontSize:32}}>{r.av}</div>}<div style={{flex:1}}><b>{r.name}{r.you?' (you)':''}</b><br/><span className="muted">{r.streak}-day streak</span></div><div style={{height:8,width:90,background:'#E4E2F5',borderRadius:99}}><div style={{width:Math.min(100,r.streak/14*100)+'%',height:'100%',background:cols[i%3],borderRadius:99}}/></div></div>;});}()}</div>
 <div className="card" style={{background:'linear-gradient(135deg,#FFF5D9,#E9E1F5)'}}><h3>Family & Friends 💛</h3>
 <p><b>{sharedTotal} shared moments this stretch!</b> <span className="muted">(counted from real events)</span></p>
 {sharedTotal>=18&&<p>🎉 Milestone — 18 together! Keep each other gently going.</p>}
