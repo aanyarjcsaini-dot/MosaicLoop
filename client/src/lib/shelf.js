@@ -14,8 +14,13 @@ return{state:remaining===0?'depleted':'ok',expected,elapsed,remaining,perDay,fin
 }
 export function logs(){try{return JSON.parse(localStorage.getItem('events')||'{}');}catch{return{};}}
 export function logDay(k,ev){const L=logs();L[k]=L[k]||[];if(!L[k].includes(ev))L[k].push(ev);localStorage.setItem('events',JSON.stringify(L));}
-export function shelf(){try{return JSON.parse(localStorage.getItem('shelf2')||'null')||seed();}catch{return seed();}}
-export function seed(){const s=[{id:'s1',pid:'bb-rollon',startDate:off(12),perDayOverride:null,expectedOverride:null,confirmations:[off(1),off(0)],snoozeUntil:null,lastPrompt:null,status:'open'},{id:'s2',pid:'bb-biotin-30',startDate:off(9),perDayOverride:null,expectedOverride:null,confirmations:[off(0)],snoozeUntil:null,lastPrompt:null,status:'open'}];
+export function shelf(){try{const s=JSON.parse(localStorage.getItem('shelf2')||'null')||seed();return ensureFourth(s);}catch(e){return seed();}}
+function ensureFourth(s){s=s.filter(function(x){return x.id!=='demo-restock'&&!x.demo;});
+if(!s.some(function(x){return x.id==='s1'||x.id==='s2';})){try{saveShelf(s);}catch(e){}return s;}
+if(s.some(function(x){return x.id==='s4';})){return s;}
+const n=[...s,{id:'s4',pid:'bb-sleep',startDate:off(26),perDayOverride:null,expectedOverride:null,confirmations:[],snoozeUntil:null,lastPrompt:null,muted:false,status:'open'}];
+try{saveShelf(n);}catch(e){}return n;}
+export function seed(){const s=[{id:'s1',pid:'bb-rollon',startDate:off(12),perDayOverride:null,expectedOverride:null,confirmations:[off(1),off(0)],snoozeUntil:null,lastPrompt:null,status:'open'},{id:'s2',pid:'bb-biotin-30',startDate:off(9),perDayOverride:null,expectedOverride:null,confirmations:[off(0)],snoozeUntil:null,lastPrompt:null,status:'open'},{id:'s4',pid:'bb-sleep',startDate:off(26),perDayOverride:null,expectedOverride:null,confirmations:[],snoozeUntil:null,lastPrompt:null,muted:false,status:'open'}];
 localStorage.setItem('shelf2',JSON.stringify(s));return s;}
 function off(n){const d=new Date();d.setDate(d.getDate()-n);return dayKey(d);}
 export function saveShelf(s){localStorage.setItem('shelf',JSON.stringify(s));localStorage.setItem('shelf2',JSON.stringify(s));}
